@@ -1,43 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Threading.Tasks;
-using SFML;
-using SFML.Graphics;
+﻿using game_cannons;
+using System;
 using SFML.Window;
 
-namespace SFML_Test
+namespace game
 {
     static class Program
     {
-        static void OnClose(object sender, EventArgs e)
+        static void Main(string[] args)
         {
-            // Close the window when OnClose event is received
-            RenderWindow window = (RenderWindow)sender;
-            window.Close();
+            App.Run();
         }
-
-        static void Main()
-        {
-            // Create the main window
-            RenderWindow app = new RenderWindow(new VideoMode(800, 600), "SFML Works!");
-            app.Closed += new EventHandler(OnClose);
-
-            SFML.Graphics.Color windowColor = new SFML.Graphics.Color(0, 192, 255);
-
-            // Start the game loop
-            while (app.IsOpen)
-            {
-                // Process events
-                app.DispatchEvents();
-
-                // Clear screen
-                app.Clear(windowColor);
-
-                // Update the window
-                app.Display();
-            } //End game loop
-        } //End Main()
-    } //End Program
+    }
 }
