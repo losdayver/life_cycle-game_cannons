@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 namespace game_cannons
 {
     /// <summary>
-    /// Класс описывает приложение в целом -- все его аспекты, 
+    /// Данный статический класс описывает приложение в целом -- все его аспекты, 
     /// связанные с самой работой приложения, но не с логикой игры
     /// </summary>
     static class App
     {
-        static RenderWindow window = new SFML.Graphics.RenderWindow(new VideoMode(800, 600), "Тестовое окно");
+        public static RenderWindow window = new SFML.Graphics.RenderWindow(new VideoMode(800, 600), "Тестовое окно");
 
         /// <summary>
         /// Данная функция вызывается для запуска приложения. 
@@ -27,21 +27,19 @@ namespace game_cannons
             window.KeyPressed += KeyPressed;
             window.Closed += OnClose;
 
-            var circle = new SFML.Graphics.CircleShape(100f)
-            {
-                FillColor = SFML.Graphics.Color.Blue
-            };
-
             while (window.IsOpen)
             {
-                // Process events
+                // Запуск обработчика событий запускается каждый кадр приложения
                 window.DispatchEvents();
 
-                window.Draw(circle);
+                #region Основная логика программы
 
-                //Тут идет основная логика программы
+                Game.Tick();
+                UI.Draw();
 
-                // Finally, display the rendered frame on screen
+                #endregion
+
+                // Обновление экрана
                 window.Display();
             }
         }
@@ -70,6 +68,9 @@ namespace game_cannons
             }
         }
 
+        /// <summary>
+        /// Метод описывает поведение приложения при закрытии окна
+        /// </summary>
         private static void OnClose(object sender, EventArgs e)
         {
             window.Close();
