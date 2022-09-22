@@ -16,6 +16,11 @@ namespace game_cannons
     {
         public static RenderWindow window = new SFML.Graphics.RenderWindow(new VideoMode(800, 600), "Тестовое окно");
 
+        static App()
+        {
+            window.SetFramerateLimit(30);
+        }
+
         /// <summary>
         /// Данная функция вызывается для запуска приложения. 
         /// Внутри находистя основной цикл работы приложения, а также обработчики событий
@@ -25,6 +30,7 @@ namespace game_cannons
             // тут короче в эвенты окна добавляется обработка клавиш -- надо почитать про это 
             //TODO
             window.KeyPressed += KeyPressed;
+            window.KeyReleased += KeyReleased;
             window.Closed += OnClose;
 
             while (window.IsOpen)
@@ -59,12 +65,26 @@ namespace game_cannons
             setState(Keyboard.Key.Up, ref KEYS.KEY_UP);
             setState(Keyboard.Key.Down, ref KEYS.KEY_DOWN);
             setState(Keyboard.Key.Left, ref KEYS.KEY_LEFT);
-            setState(Keyboard.Key.Left, ref KEYS.KEY_RIGHT);
+            setState(Keyboard.Key.Right, ref KEYS.KEY_RIGHT);
 
             void setState(Keyboard.Key sfmlInput, ref bool key)
             {
                 if (e.Code == sfmlInput) key = true;
-                else key = false;
+            }
+        }
+
+        private static void KeyReleased(object sender, KeyEventArgs e)
+        {
+            var window = (Window)sender;
+
+            setState(Keyboard.Key.Up, ref KEYS.KEY_UP);
+            setState(Keyboard.Key.Down, ref KEYS.KEY_DOWN);
+            setState(Keyboard.Key.Left, ref KEYS.KEY_LEFT);
+            setState(Keyboard.Key.Right, ref KEYS.KEY_RIGHT);
+
+            void setState(Keyboard.Key sfmlInput, ref bool key)
+            {
+                if (e.Code == sfmlInput) key = false;
             }
         }
 
