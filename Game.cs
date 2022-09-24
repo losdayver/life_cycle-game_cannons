@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SFML.Graphics;
+using SFML.Window;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -71,18 +73,45 @@ namespace game_cannons
     {
         int x = 0;
         int y = 0;
-        int x2 = 100;
-        int y2 = 100;
-        byte[] permutationTable; // пока подумаю юзать ли это или просто встроенным рандомайзером обойтись
+        int x2;
+        int y2;
+        byte[] permutationTable;
 
-        public Map(int seed = 0)
+        public Map(int x, int y, int seed = 0)
         {
             Random rnd = new Random(seed);
             permutationTable = new byte[1024];
             rnd.NextBytes(permutationTable);
+            this.x2 = x;
+            this.y2 = y;
         }
 
-        public float OctavePerlin(int x, int y, int octaves, float persistence = 0.5f)
+        public void GenerateMap(int octaves)
+        {
+            float res;
+            Image img = new((uint)this.x2, (uint)this.y2);
+            int border = 0;
+
+            for (int i = 0; i < this.y2; i++)
+            {
+                for (int j = 0; j < this.x2; j++)
+                {
+                    res = OctavePerlin(j, i, octaves);
+                    if (res >= border)
+                    {
+                        img.SetPixel((uint)j, (uint)i, Color.White);
+                    }
+                    else
+                    {
+                        img.SetPixel((uint)j, (uint)i, Color.Black);
+                    }
+                }
+            }
+
+            img.SaveToFile("D:\\Images\\test.jpg");
+        }
+
+        float OctavePerlin(int x, int y, int octaves, float persistence = 0.5f)
         {
             float amplitude = 1;
             float max = 0;
@@ -98,12 +127,19 @@ namespace game_cannons
             }
 
             return result / max;
-        }
+        } 
 
         float Perlin(int curx, int cury)
         {
+            curx = curx % this.x2;
+            cury = cury % this.y2;
             int squareNum = FindSquare(curx, cury);
-            if (squareNum == 0) throw new Exception("Wrong square number!");
+            if (squareNum == 0)
+            {
+                Console.WriteLine(curx);
+                Console.WriteLine(cury);
+                throw new Exception("Wrong square number!");
+            }
             Vector2[] vectors = FindVectors(squareNum, curx, cury);
             Vector2[] nodeVectors = new Vector2[4];
 

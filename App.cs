@@ -14,6 +14,7 @@ namespace game_cannons
     /// </summary>
     static class App
     {
+        // лучше размеры окна хранить в переменных
         public static RenderWindow window = new SFML.Graphics.RenderWindow(new VideoMode(800, 600), "Тестовое окно");
 
         static App()
@@ -32,6 +33,9 @@ namespace game_cannons
             window.KeyPressed += KeyPressed;
             window.KeyReleased += KeyReleased;
             window.Closed += OnClose;
+
+            Map map = new Map(800, 600);
+            map.GenerateMap(4);
 
             while (window.IsOpen)
             {
