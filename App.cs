@@ -34,8 +34,8 @@ namespace game_cannons
             window.KeyReleased += KeyReleased;
             window.Closed += OnClose;
 
-            Map map = new Map(800, 600);
-            map.GenerateMap(4);
+            //Map map = new Map(800, 600);
+            //map.GenerateMap(4);
 
             while (window.IsOpen)
             {

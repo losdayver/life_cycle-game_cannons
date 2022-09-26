@@ -22,6 +22,7 @@ namespace game_cannons
         static Game()
         {
             testTank = new Tank();
+            Scene scnece = new();
         }
 
         /// <summary>
@@ -69,233 +70,286 @@ namespace game_cannons
         }
     }
 
-    class Map
+    public class Scene
     {
-        int x = 0;
-        int y = 0;
-        int x2;
-        int y2;
-        byte[] permutationTable;
+        uint xSize = 800;
+        uint ySize = 600;
 
-        public Map(int x, int y, int seed = 0)
+        public Image GenerateScene(int depth, int maxHeight)
         {
-            Random rnd = new Random(seed);
-            permutationTable = new byte[1024];
-            rnd.NextBytes(permutationTable);
-            this.x2 = x;
-            this.y2 = y;
-        }
+            Random rand = new();
+            int[] heights = new int[depth + 1];
 
-        public void GenerateMap(int octaves)
-        {
-            float res;
-            Image img = new((uint)this.x2, (uint)this.y2);
-            int border = 0;
-
-            for (int i = 0; i < this.y2; i++)
+            Recurse();
+            
+            void Recurse(int offset = 0, int i = 2)
             {
-                for (int j = 0; j < this.x2; j++)
+                if (i > depth) return;
+
+                if (i == 2)
                 {
-                    res = OctavePerlin(j, i, octaves);
-                    if (res >= border)
-                    {
-                        img.SetPixel((uint)j, (uint)i, Color.White);
-                    }
-                    else
-                    {
-                        img.SetPixel((uint)j, (uint)i, Color.Black);
-                    }
+                    heights[0] = rand.Next(0, maxHeight);
+                    heights[heights.Length - 1] = heights[0];
+                    heights[depth / 2] = rand.Next(0, maxHeight);
+                }
+                else
+                {
+                    int last = heights[offset];
+                    int next = heights[offset + depth / (i / 2)];
+
+                    heights[offset + depth / i] = (last + next) / 2;
+                }
+
+                Recurse(offset, i * 2);
+                Recurse(offset + depth / i, i * 2);
+            }
+
+            Image img = new Image(xSize, ySize);
+
+            for (uint x = 0; x < xSize; x++)
+            {
+                int startPointer = (int)(((float)depth / xSize) * x);
+                int endPointer = startPointer + 1;
+                int k = heights[endPointer] - heights[startPointer];
+                int offset = (int)(xSize / depth) * startPointer;
+
+                for (uint y = 0; y < k * (x - offset) + heights[startPointer]; y++)
+                {
+                    img.SetPixel(x, y, Color.White);
                 }
             }
 
-            img.SaveToFile("D:\\Images\\test.jpg");
-        }
-
-        float OctavePerlin(int x, int y, int octaves, float persistence = 0.5f)
-        {
-            float amplitude = 1;
-            float max = 0;
-            float result = 0;
-
-            for (int i = 0; i < octaves; i++)
-            {
-                max += amplitude;
-                result += Perlin(x, y) * amplitude;
-                amplitude *= persistence;
-                x *= 2;
-                y *= 2;
-            }
-
-            return result / max;
-        } 
-
-        float Perlin(int curx, int cury)
-        {
-            curx = curx % this.x2;
-            cury = cury % this.y2;
-            int squareNum = FindSquare(curx, cury);
-            if (squareNum == 0)
-            {
-                Console.WriteLine(curx);
-                Console.WriteLine(cury);
-                throw new Exception("Wrong square number!");
-            }
-            Vector2[] vectors = FindVectors(squareNum, curx, cury);
-            Vector2[] nodeVectors = new Vector2[4];
-
-            for (int i = 0; i < 4; i++)
-            {
-                nodeVectors[i] = GetNodeVector();
-            }
-
-
-            float[] c = new float[4];
-
-            for (int i = 0; i < 4; i++)
-            {
-                c[i] = Vector2.Dot(vectors[i], nodeVectors[i]);
-            }
-
-            int[] relativeCoordinates = FindRelativeCoordinates(squareNum, curx, cury);
-            int rx = relativeCoordinates[0];
-            int ry = relativeCoordinates[1];
-
-            float t1 = Lerp(c[0], c[1], rx);
-            float t2 = Lerp(c[2], c[3], rx);
-            float res = Lerp(t1, t2, ry);
-
-            return res;
-        }
-
-        Vector2 GetNodeVector()
-        {
-            Random rnd = new Random();
-            int x = rnd.Next(1, 5);
-
-            switch (x)
-            {
-                case 1:
-                    return new Vector2(1, 0);
-                case 2:
-                    return new Vector2(-1, 0);
-                case 3:
-                    return new Vector2(0, 1);
-                default:
-                    return new Vector2(0, -1);
-            }
-        }
-
-        int[] FindRelativeCoordinates(int sq, int x, int y)
-        {
-            int[] nc = new int[2];
-            int cx = (this.x2 - this.x) / 2;
-            int cy = (this.y2 - this.y) / 2;
-
-            if (sq == 1)
-            {
-                nc[0] = x;
-                nc[1] = y;
-            }
-            else if (sq == 2)
-            {
-                nc[0] = x - cx;
-                nc[1] = y;
-            }
-            else if (sq == 3)
-            {
-                nc[0] = x;
-                nc[1] = y - cy;
-            }
-            else if (sq == 4)
-            {
-                nc[0] = x - cx;
-                nc[1] = y - cy;
-            }
-
-            return nc;
-        }
-
-
-        int FindSquare(int x, int y)
-        {
-            int cx = (this.x2 - this.x) / 2;
-            int cy = (this.y2 - this.y) / 2;
-            if (x <= cx && x >= this.x && y >= this.y && y <= cy) return 1;
-            if (x >= cx && x <= this.x2 && y >= this.y && y <= cy) return 2;
-            if (x <= cx && x >= this.x && y <= this.y2 && y >= cy) return 3;
-            if (x >= cx && x <= this.x2 && y <= this.y2 && y >= cy) return 4;
-            return 0;
-        }
-
-        Vector2[] FindVectors(int sq, int x, int y)
-        {
-            Vector2[] nc = new Vector2[4];
-            int cx = (this.x2 - this.x) / 2;
-            int cy = (this.y2 - this.y) / 2;
-
-            float x1 = 0, y1 = 0, x2 = 0, y2 = 0, x3 = 0, y3 = 0, x4 = 0, y4 = 0;
-
-            if (sq == 1)
-            {
-                x1 = this.x;
-                y1 = this.y;
-                x2 = cx;
-                y2 = this.y;
-                x3 = this.x;
-                y3 = cy;
-                x4 = cx;
-                y4 = cy;
-            }
-            else if (sq == 2)
-            {
-                x1 = cx;
-                y1 = this.y;
-                x2 = this.x2;
-                y2 = this.y;
-                x3 = cx;
-                y3 = cy;
-                x4 = this.x2;
-                y4 = cy;
-            }
-            else if (sq == 3)
-            {
-                x1 = this.x;
-                y1 = cy;
-                x2 = cx;
-                y2 = cy;
-                x3 = this.x;
-                y3 = this.y2;
-                x4 = cx;
-                y4 = this.y2;
-            }
-            else if (sq == 4)
-            {
-                x1 = cx;
-                y1 = cy;
-                x2 = this.x2;
-                y2 = cy;
-                x3 = cx;
-                y3 = this.y2;
-                x4 = this.x2;
-                y4 = this.y2;
-            }
-
-            nc[0] = new Vector2((x - x1) / cx, (y - y1) / cy);
-            nc[1] = new Vector2((x - x2) / cx, (y - y2) / cy);
-            nc[2] = new Vector2((x - x3) / cx, (y - y3) / cy);
-            nc[3] = new Vector2((x - x4) / cx, (y - y4) / cy);
-
-            return nc;
-        }
-
-        float Lerp(float a, float b, float x)
-        {
-            return a + x * (b - a);
-        }
-
-        static float QunticCurve(float t)
-        {
-            return t * t * t * (t * (t * 6 - 15) + 10);
+            return img;
         }
     }
+
+    //class Map
+    //{
+    //    int x = 0;
+    //    int y = 0;
+    //    int x2;
+    //    int y2;
+    //    byte[] permutationTable;
+
+    //    public Map(int x, int y, int seed = 0)
+    //    {
+    //        Random rnd = new Random(seed);
+    //        permutationTable = new byte[1024];
+    //        rnd.NextBytes(permutationTable);
+    //        this.x2 = x;
+    //        this.y2 = y;
+    //    }
+
+    //    public void GenerateMap(int octaves)
+    //    {
+    //        float res;
+    //        Image img = new((uint)this.x2, (uint)this.y2);
+    //        int border = 0;
+
+    //        for (int i = 0; i < this.y2; i++)
+    //        {
+    //            for (int j = 0; j < this.x2; j++)
+    //            {
+    //                res = OctavePerlin(j, i, octaves);
+    //                if (res >= border)
+    //                {
+    //                    img.SetPixel((uint)j, (uint)i, Color.White);
+    //                }
+    //                else
+    //                {
+    //                    img.SetPixel((uint)j, (uint)i, Color.Black);
+    //                }
+    //            }
+    //        }
+
+    //        img.SaveToFile("D:\\Images\\test.jpg");
+    //    }
+
+    //    float OctavePerlin(int x, int y, int octaves, float persistence = 0.5f)
+    //    {
+    //        float amplitude = 1;
+    //        float max = 0;
+    //        float result = 0;
+
+    //        for (int i = 0; i < octaves; i++)
+    //        {
+    //            max += amplitude;
+    //            result += Perlin(x, y) * amplitude;
+    //            amplitude *= persistence;
+    //            x *= 2;
+    //            y *= 2;
+    //        }
+
+    //        return result / max;
+    //    } 
+
+    //    float Perlin(int curx, int cury)
+    //    {
+    //        curx = curx % this.x2;
+    //        cury = cury % this.y2;
+    //        int squareNum = FindSquare(curx, cury);
+    //        if (squareNum == 0)
+    //        {
+    //            Console.WriteLine(curx);
+    //            Console.WriteLine(cury);
+    //            throw new Exception("Wrong square number!");
+    //        }
+    //        Vector2[] vectors = FindVectors(squareNum, curx, cury);
+    //        Vector2[] nodeVectors = new Vector2[4];
+
+    //        for (int i = 0; i < 4; i++)
+    //        {
+    //            nodeVectors[i] = GetNodeVector();
+    //        }
+
+
+    //        float[] c = new float[4];
+
+    //        for (int i = 0; i < 4; i++)
+    //        {
+    //            c[i] = Vector2.Dot(vectors[i], nodeVectors[i]);
+    //        }
+
+    //        int[] relativeCoordinates = FindRelativeCoordinates(squareNum, curx, cury);
+    //        int rx = relativeCoordinates[0];
+    //        int ry = relativeCoordinates[1];
+
+    //        float t1 = Lerp(c[0], c[1], rx);
+    //        float t2 = Lerp(c[2], c[3], rx);
+    //        float res = Lerp(t1, t2, ry);
+
+    //        return res;
+    //    }
+
+    //    Vector2 GetNodeVector()
+    //    {
+    //        Random rnd = new Random();
+    //        int x = rnd.Next(1, 5);
+
+    //        switch (x)
+    //        {
+    //            case 1:
+    //                return new Vector2(1, 0);
+    //            case 2:
+    //                return new Vector2(-1, 0);
+    //            case 3:
+    //                return new Vector2(0, 1);
+    //            default:
+    //                return new Vector2(0, -1);
+    //        }
+    //    }
+
+    //    int[] FindRelativeCoordinates(int sq, int x, int y)
+    //    {
+    //        int[] nc = new int[2];
+    //        int cx = (this.x2 - this.x) / 2;
+    //        int cy = (this.y2 - this.y) / 2;
+
+    //        if (sq == 1)
+    //        {
+    //            nc[0] = x;
+    //            nc[1] = y;
+    //        }
+    //        else if (sq == 2)
+    //        {
+    //            nc[0] = x - cx;
+    //            nc[1] = y;
+    //        }
+    //        else if (sq == 3)
+    //        {
+    //            nc[0] = x;
+    //            nc[1] = y - cy;
+    //        }
+    //        else if (sq == 4)
+    //        {
+    //            nc[0] = x - cx;
+    //            nc[1] = y - cy;
+    //        }
+
+    //        return nc;
+    //    }
+
+
+    //    int FindSquare(int x, int y)
+    //    {
+    //        int cx = (this.x2 - this.x) / 2;
+    //        int cy = (this.y2 - this.y) / 2;
+    //        if (x <= cx && x >= this.x && y >= this.y && y <= cy) return 1;
+    //        if (x >= cx && x <= this.x2 && y >= this.y && y <= cy) return 2;
+    //        if (x <= cx && x >= this.x && y <= this.y2 && y >= cy) return 3;
+    //        if (x >= cx && x <= this.x2 && y <= this.y2 && y >= cy) return 4;
+    //        return 0;
+    //    }
+
+    //    Vector2[] FindVectors(int sq, int x, int y)
+    //    {
+    //        Vector2[] nc = new Vector2[4];
+    //        int cx = (this.x2 - this.x) / 2;
+    //        int cy = (this.y2 - this.y) / 2;
+
+    //        float x1 = 0, y1 = 0, x2 = 0, y2 = 0, x3 = 0, y3 = 0, x4 = 0, y4 = 0;
+
+    //        if (sq == 1)
+    //        {
+    //            x1 = this.x;
+    //            y1 = this.y;
+    //            x2 = cx;
+    //            y2 = this.y;
+    //            x3 = this.x;
+    //            y3 = cy;
+    //            x4 = cx;
+    //            y4 = cy;
+    //        }
+    //        else if (sq == 2)
+    //        {
+    //            x1 = cx;
+    //            y1 = this.y;
+    //            x2 = this.x2;
+    //            y2 = this.y;
+    //            x3 = cx;
+    //            y3 = cy;
+    //            x4 = this.x2;
+    //            y4 = cy;
+    //        }
+    //        else if (sq == 3)
+    //        {
+    //            x1 = this.x;
+    //            y1 = cy;
+    //            x2 = cx;
+    //            y2 = cy;
+    //            x3 = this.x;
+    //            y3 = this.y2;
+    //            x4 = cx;
+    //            y4 = this.y2;
+    //        }
+    //        else if (sq == 4)
+    //        {
+    //            x1 = cx;
+    //            y1 = cy;
+    //            x2 = this.x2;
+    //            y2 = cy;
+    //            x3 = cx;
+    //            y3 = this.y2;
+    //            x4 = this.x2;
+    //            y4 = this.y2;
+    //        }
+
+    //        nc[0] = new Vector2((x - x1) / cx, (y - y1) / cy);
+    //        nc[1] = new Vector2((x - x2) / cx, (y - y2) / cy);
+    //        nc[2] = new Vector2((x - x3) / cx, (y - y3) / cy);
+    //        nc[3] = new Vector2((x - x4) / cx, (y - y4) / cy);
+
+    //        return nc;
+    //    }
+
+    //    float Lerp(float a, float b, float x)
+    //    {
+    //        return a + x * (b - a);
+    //    }
+
+    //    static float QunticCurve(float t)
+    //    {
+    //        return t * t * t * (t * (t * 6 - 15) + 10);
+    //    }
+    //}
 }

@@ -22,7 +22,7 @@ namespace game_cannons
         static Texture greenTankBodyTexture;
         static Texture tankTracksTexture;
         static Texture turretTexture;
-
+        static Texture landTexture;
 
         static UI()
         {
@@ -32,6 +32,10 @@ namespace game_cannons
             greenTankBodyTexture = new (resourcesPath + "kenney_tankspack\\PNG\\Default size\\tanks_tankGreen_body1.png");
             tankTracksTexture = new(resourcesPath + "kenney_tankspack\\PNG\\Default size\\tanks_tankTracks1.png");
             turretTexture = new(resourcesPath + "kenney_tankspack\\PNG\\Default size\\tanks_turret4.png");
+
+            Scene scene = new();
+
+            landTexture = new(scene.GenerateScene(32, 500));
         }
 
         /// <summary>
@@ -60,6 +64,9 @@ namespace game_cannons
             App.window.Draw(turretSprite);
             App.window.Draw(tankSprite);
             App.window.Draw(tankTracksSprite);
+
+            Sprite sceneSprite = new(landTexture);
+            App.window.Draw(sceneSprite);
         }
     }
 }
