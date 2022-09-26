@@ -35,7 +35,7 @@ namespace game_cannons
 
             Scene scene = new();
 
-            landTexture = new(scene.GenerateScene(32, 500));
+            landTexture = new(scene.GenerateScene(512, 500));
         }
 
         /// <summary>

@@ -15,7 +15,7 @@ namespace game_cannons
     static class App
     {
         // лучше размеры окна хранить в переменных
-        public static RenderWindow window = new SFML.Graphics.RenderWindow(new VideoMode(800, 600), "Тестовое окно");
+        public static RenderWindow window = new SFML.Graphics.RenderWindow(new VideoMode(1024, 600), "Тестовое окно");
 
         static App()
         {

@@ -72,8 +72,8 @@ namespace game_cannons
 
     public class Scene
     {
-        uint xSize = 800;
-        uint ySize = 600;
+        uint xSize = 1024;
+        uint ySize = 640;
 
         public Image GenerateScene(int depth, int maxHeight)
         {
@@ -97,7 +97,15 @@ namespace game_cannons
                     int last = heights[offset];
                     int next = heights[offset + depth / (i / 2)];
 
-                    heights[offset + depth / i] = (last + next) / 2;
+                    int middle = next - last;
+
+
+                    int value;
+
+                    if (next > last) value = rand.Next(last, next);
+                    else value = rand.Next(next, last);
+
+                    heights[offset + depth / i] = value;
                 }
 
                 Recurse(offset, i * 2);
@@ -110,12 +118,12 @@ namespace game_cannons
             {
                 int startPointer = (int)(((float)depth / xSize) * x);
                 int endPointer = startPointer + 1;
-                int k = heights[endPointer] - heights[startPointer];
-                int offset = (int)(xSize / depth) * startPointer;
+                float step = xSize / depth;
+                float k = (float)(heights[endPointer] - heights[startPointer]) / step;
 
-                for (uint y = 0; y < k * (x - offset) + heights[startPointer]; y++)
+                for (uint y = 0; y < k * (x - step * startPointer) + heights[startPointer]; y++)
                 {
-                    img.SetPixel(x, y, Color.White);
+                    img.SetPixel(x, ySize - y - 1, Color.White);
                 }
             }
 
