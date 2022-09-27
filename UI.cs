@@ -18,24 +18,20 @@ namespace game_cannons
     /// </summary>
     internal static class UI
     {
-        static string resourcesPath = Environment.CurrentDirectory;
         static Texture greenTankBodyTexture;
         static Texture tankTracksTexture;
         static Texture turretTexture;
-        static Texture landTexture;
+        static RenderTexture landTexture;
 
         static UI()
         {
-            resourcesPath = resourcesPath.Substring(0, resourcesPath.Length - "bin\\Debug\\net6.0".Length);
-            resourcesPath += "\\resources\\";
-
-            greenTankBodyTexture = new (resourcesPath + "kenney_tankspack\\PNG\\Default size\\tanks_tankGreen_body1.png");
-            tankTracksTexture = new(resourcesPath + "kenney_tankspack\\PNG\\Default size\\tanks_tankTracks1.png");
-            turretTexture = new(resourcesPath + "kenney_tankspack\\PNG\\Default size\\tanks_turret4.png");
+            greenTankBodyTexture = new (VARIABLES.RESOURCEPATH + "kenney_tankspack\\PNG\\Default size\\tanks_tankGreen_body1.png");
+            tankTracksTexture = new(VARIABLES.RESOURCEPATH + "kenney_tankspack\\PNG\\Default size\\tanks_tankTracks1.png");
+            turretTexture = new(VARIABLES.RESOURCEPATH + "kenney_tankspack\\PNG\\Default size\\tanks_turret4.png");
 
             Scene scene = new();
 
-            landTexture = new(scene.GenerateScene(512, 500));
+            landTexture = scene.GenerateScene(512, 500);
         }
 
         /// <summary>
@@ -65,7 +61,7 @@ namespace game_cannons
             App.window.Draw(tankSprite);
             App.window.Draw(tankTracksSprite);
 
-            Sprite sceneSprite = new(landTexture);
+            Sprite sceneSprite = new(landTexture.Texture);
             App.window.Draw(sceneSprite);
         }
     }

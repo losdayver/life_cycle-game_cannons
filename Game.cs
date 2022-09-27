@@ -1,5 +1,7 @@
 ﻿using SFML.Graphics;
 using SFML.Window;
+using SFML.System;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -75,7 +77,7 @@ namespace game_cannons
         uint xSize = 1024;
         uint ySize = 640;
 
-        public Image GenerateScene(int depth, int maxHeight)
+        public RenderTexture GenerateScene(int depth, int maxHeight)
         {
             Random rand = new();
             int[] heights = new int[depth + 1];
@@ -112,7 +114,7 @@ namespace game_cannons
                 Recurse(offset + depth / i, i * 2);
             }
 
-            Image img = new Image(xSize, ySize);
+            RenderTexture renderTexure = new RenderTexture(xSize, ySize);
 
             for (uint x = 0; x < xSize; x++)
             {
@@ -121,13 +123,14 @@ namespace game_cannons
                 float step = xSize / depth;
                 float k = (float)(heights[endPointer] - heights[startPointer]) / step;
 
-                for (uint y = 0; y < k * (x - step * startPointer) + heights[startPointer]; y++)
-                {
-                    img.SetPixel(x, ySize - y - 1, Color.White);
-                }
+                VertexArray line = new VertexArray(PrimitiveType.Lines);
+                line.Append(new Vertex(new Vector2f(x, 0), Color.White));
+                line.Append(new Vertex(new Vector2f(x, k * (x - step * startPointer) + heights[startPointer] - 1), Color.White));
+
+                renderTexure.Draw(line);
             }
 
-            return img;
+            return renderTexure;
         }
     }
 

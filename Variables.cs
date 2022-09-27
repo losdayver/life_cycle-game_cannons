@@ -24,6 +24,12 @@ namespace game_cannons
     /// </summary>
     internal static class VARIABLES
     {
-     
+        public static string RESOURCEPATH = Environment.CurrentDirectory;
+
+        static VARIABLES()
+        {
+            RESOURCEPATH = RESOURCEPATH.Substring(0, RESOURCEPATH.Length - "bin\\Debug\\net6.0".Length);
+            RESOURCEPATH += "\\resources\\";
+        }
     }
 }
