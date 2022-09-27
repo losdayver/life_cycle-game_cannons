@@ -22,11 +22,9 @@ namespace game_cannons
 
         static UI()
         {
-            
+            Scene scene = new(1024, 600);
 
-            Scene scene = new();
-
-            landTexture = scene.GenerateScene(512, 500);
+            landTexture = scene.GenerateScene(128, 400);
         }
 
         /// <summary>

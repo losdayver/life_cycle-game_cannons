@@ -24,7 +24,7 @@ namespace game_cannons
         static Game()
         {
             testTank = new Tank();
-            Scene scnece = new();
+            Scene scnece = new(1024, 640);
         }
 
         /// <summary>
@@ -72,12 +72,25 @@ namespace game_cannons
         }
     }
 
+    /// <summary>
+    /// Данный класс описывает игровую сцену, на которой происходит основное действие игры
+    /// </summary>
     public class Scene
     {
+        // Размер сцены по горизонтали в пикселях -- значение должно быть 2^n
         uint xSize = 1024;
         uint ySize = 640;
 
-        RenderTexture map;
+        RenderTexture? map;
+
+        public Scene(uint xSize, uint ySize)
+        {
+            if ((Decimal)(Math.Log(xSize, 2)) % 1 != 0)
+                throw new Exception("xSize должно иметь вид 2^n");
+
+            this.xSize = xSize;
+            this.ySize = ySize;
+        }
 
         public RenderTexture GenerateScene(int depth, int maxHeight)
         {
@@ -101,15 +114,16 @@ namespace game_cannons
                     int last = heights[offset];
                     int next = heights[offset + depth / (i / 2)];
 
-                    int middle = next - last;
+                    if (last > next)
+                    {
+                        int buffer = last;
+                        last = next;
+                        next = buffer;
+                    }
 
+                    int middle = (next - last) / 2 + last;
 
-                    int value;
-
-                    if (next > last) value = rand.Next(last, next);
-                    else value = rand.Next(next, last);
-
-                    heights[offset + depth / i] = value;
+                    heights[offset + depth / i] = rand.Next(middle - middle / (i-2), middle + (int)(ySize - middle) / (i-2));
                 }
 
                 Recurse(offset, i * 2);
