@@ -126,10 +126,14 @@ namespace game_cannons
                 VertexArray line = new VertexArray(PrimitiveType.Lines);
                 line.Append(new Vertex(new Vector2f(x, 0), Color.White));
                 line.Append(new Vertex(new Vector2f(x, k * (x - step * startPointer) + heights[startPointer] - 1), Color.White));
-
+                    
                 renderTexure.Draw(line);
             }
 
+            Sprite blendSprite = new Sprite(new Texture(VARIABLES.RESOURCEPATH + "location\\ground.png"));
+            RenderStates renderStates = new(BlendMode.Multiply);
+            blendSprite.Draw(renderTexure, renderStates);
+            //renderTexure.Draw(blendSprite);
             return renderTexure;
         }
     }
