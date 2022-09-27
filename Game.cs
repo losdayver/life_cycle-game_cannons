@@ -77,6 +77,8 @@ namespace game_cannons
         uint xSize = 1024;
         uint ySize = 640;
 
+        RenderTexture map;
+
         public RenderTexture GenerateScene(int depth, int maxHeight)
         {
             Random rand = new();
@@ -130,10 +132,11 @@ namespace game_cannons
                 renderTexure.Draw(line);
             }
 
-            Sprite blendSprite = new Sprite(new Texture(VARIABLES.RESOURCEPATH + "location\\ground.png"));
+            map = renderTexure;
+
+            Sprite blendSprite = new Sprite(TEXTUTRES.LANDTEXTURE);
             RenderStates renderStates = new(BlendMode.Multiply);
             blendSprite.Draw(renderTexure, renderStates);
-            //renderTexure.Draw(blendSprite);
             return renderTexure;
         }
     }

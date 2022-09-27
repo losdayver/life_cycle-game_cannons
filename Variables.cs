@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SFML.Graphics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,6 +31,25 @@ namespace game_cannons
         {
             RESOURCEPATH = RESOURCEPATH.Substring(0, RESOURCEPATH.Length - "bin\\Debug\\net6.0".Length);
             RESOURCEPATH += "\\resources\\";
+        }
+    }
+
+    /// <summary>
+    /// Данный статический класс отвечает за хранения текстур типа SFML.Texture
+    /// </summary>
+    internal static class TEXTUTRES
+    {
+        public static Texture GREENTANKBODY;
+        public static Texture TANKTRACKS;
+        public static Texture TURRET;
+        public static Texture LANDTEXTURE;
+
+        static TEXTUTRES()
+        {
+            GREENTANKBODY = new(VARIABLES.RESOURCEPATH + "kenney_tankspack\\PNG\\Default size\\tanks_tankGreen_body1.png");
+            TANKTRACKS = new(VARIABLES.RESOURCEPATH + "kenney_tankspack\\PNG\\Default size\\tanks_tankTracks1.png");
+            TURRET = new(VARIABLES.RESOURCEPATH + "kenney_tankspack\\PNG\\Default size\\tanks_turret4.png");
+            LANDTEXTURE = new(VARIABLES.RESOURCEPATH + "location\\moon.png");
         }
     }
 }
