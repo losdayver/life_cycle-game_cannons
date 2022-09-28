@@ -214,12 +214,15 @@ namespace game_cannons
 
             uint GetHeight(uint x)
             {
-                for (uint y = ySize; y > 0; y--)
+                for (uint y = 0; y < ySize; y++)
                 {
-                    //Console.WriteLine(mapImage.GetPixel(x, y));
-
+                  
                     if (mapImage.GetPixel(x, y) == Color.White)
                     {
+                        Console.Write(x);
+                        Console.Write(" ");
+                        Console.Write(y);
+                        Console.WriteLine();
                         return y;
                     }
                 }

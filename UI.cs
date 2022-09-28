@@ -58,8 +58,8 @@ namespace game_cannons
 
             VertexArray points = scene.GetDerivativeVector(500, 100);
 
-            Console.WriteLine(points[0].Position);
-            Console.WriteLine(points[1].Position);
+            //Console.WriteLine(points[0].Position);
+            //Console.WriteLine(points[1].Position);
 
             App.window.Draw(points);
         }
