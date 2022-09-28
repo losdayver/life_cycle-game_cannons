@@ -8,6 +8,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using System.Dynamic;
 
 namespace game_cannons
 {
@@ -77,11 +78,17 @@ namespace game_cannons
     /// </summary>
     public class Scene
     {
-        // Размер сцены по горизонтали в пикселях -- значение должно быть 2^n
-        uint xSize = 1024;
-        uint ySize = 640;
-
+        /// <summary>
+        /// Размер сцены по горизонтали в пикселях -- значение должно быть 2^n
+        /// </summary>
+        uint xSize;
+        uint ySize;
+        
+        /// <summary>
+        /// Текстура сгенерированной карты -- задается при вызове GenerateScene
+        /// </summary>
         RenderTexture? map;
+        Image? mapImage;
 
         public Scene(uint xSize, uint ySize)
         {
@@ -92,22 +99,31 @@ namespace game_cannons
             this.ySize = ySize;
         }
 
-        public RenderTexture GenerateScene(int depth, int maxHeight)
+        /// <summary>
+        /// Процедурно создает ландшафт игрового поля
+        /// </summary>
+        /// <param name="depth"> Отвечает за глубину прорисовки -- значение не должно превышать xSize </param>
+        /// <param name="maxHeight"> Максимальная высота ландшафта -- значение не должно превышать ySize </param>
+        /// <returns></returns>
+        public RenderTexture GenerateScene(uint depth, uint maxHeight)
         {
+            if (depth > ySize || maxHeight > ySize)
+                throw new Exception("Неправильно заданы параметры GenerateScene");
+
             Random rand = new();
             int[] heights = new int[depth + 1];
 
             Recurse();
             
-            void Recurse(int offset = 0, int i = 2)
+            void Recurse(uint offset = 0, uint i = 2)
             {
                 if (i > depth) return;
 
                 if (i == 2)
                 {
-                    heights[0] = rand.Next(0, maxHeight);
-                    heights[heights.Length - 1] = heights[0];
-                    heights[depth / 2] = rand.Next(0, maxHeight);
+                    heights[0] = rand.Next(0, (int)maxHeight);
+                    heights[heights.Length - 1] = (int)heights[0];
+                    heights[depth / 2] = rand.Next(0, (int)maxHeight);
                 }
                 else
                 {
@@ -123,7 +139,10 @@ namespace game_cannons
 
                     int middle = (next - last) / 2 + last;
 
-                    heights[offset + depth / i] = rand.Next(middle - middle / (i-2), middle + (int)(ySize - middle) / (i-2));
+                    heights[offset + depth / i] = rand.Next(
+                        (int)(middle - middle / (i-2)), 
+                        (int)(middle + (int)(ySize - middle) / (i-2))
+                        );
                 }
 
                 Recurse(offset, i * 2);
@@ -147,11 +166,66 @@ namespace game_cannons
             }
 
             map = renderTexure;
+            mapImage = renderTexure.Texture.CopyToImage();
 
             Sprite blendSprite = new Sprite(TEXTUTRES.LANDTEXTURE);
             RenderStates renderStates = new(BlendMode.Multiply);
             blendSprite.Draw(renderTexure, renderStates);
             return renderTexure;
+        }
+
+        public VertexArray GetDerivativeVector(uint centre, uint margin)
+        {
+            uint centreHeight = GetHeight(centre);
+
+            uint leftMax = 0;
+            uint rightMax = 0;
+            uint leftX = centre - margin;
+            uint rightX = centre + margin;
+
+            for (uint x = centre; x < centre + margin; x++)
+            {
+                uint height = GetHeight(x);
+
+                if (height > rightMax)
+                {
+                    rightMax = height;
+                    rightX = x;
+                }
+            }
+
+            for (uint x = centre; x > centre - margin; x--)
+            {
+                uint height = GetHeight(x);
+
+                if (height > leftMax)
+                {
+                    leftMax = height;
+                    leftX = x;
+                }
+                    
+            }
+
+            VertexArray vertexArray = new(PrimitiveType.Lines, 2);
+            vertexArray.Append(new Vertex(new Vector2f(leftX, leftMax), Color.Magenta));
+            vertexArray.Append(new Vertex(new Vector2f(rightX, rightMax), Color.Magenta));
+
+            return vertexArray;
+
+            uint GetHeight(uint x)
+            {
+                for (uint y = ySize; y > 0; y--)
+                {
+                    //Console.WriteLine(mapImage.GetPixel(x, y));
+
+                    if (mapImage.GetPixel(x, y) == Color.White)
+                    {
+                        return y;
+                    }
+                }
+                        
+                return 0;
+            }
         }
     }
 

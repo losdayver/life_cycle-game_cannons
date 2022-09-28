@@ -19,11 +19,10 @@ namespace game_cannons
     internal static class UI
     {
         static RenderTexture landTexture;
+        static Scene scene = new(1024, 600);
 
         static UI()
         {
-            Scene scene = new(1024, 600);
-
             landTexture = scene.GenerateScene(128, 400);
         }
 
@@ -56,6 +55,13 @@ namespace game_cannons
 
             Sprite sceneSprite = new(landTexture.Texture);
             App.window.Draw(sceneSprite);
+
+            VertexArray points = scene.GetDerivativeVector(500, 100);
+
+            Console.WriteLine(points[0].Position);
+            Console.WriteLine(points[1].Position);
+
+            App.window.Draw(points);
         }
     }
 }
