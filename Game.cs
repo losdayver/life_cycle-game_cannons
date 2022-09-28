@@ -174,31 +174,31 @@ namespace game_cannons
             return renderTexure;
         }
 
-        public VertexArray GetDerivativeVector(uint centre, uint margin)
+        public Vector2[] GetDerivativeVector(uint centre, uint margin, out Vector2 centrePoint)
         {
             uint centreHeight = GetHeight(centre);
 
-            uint leftMax = 0;
-            uint rightMax = 0;
+            uint leftMax = ySize;
+            uint rightMax = ySize;
             uint leftX = centre - margin;
             uint rightX = centre + margin;
 
-            for (uint x = centre; x < centre + margin; x++)
+            for (uint x = centre + 1; x < centre + margin; x++)
             {
                 uint height = GetHeight(x);
 
-                if (height > rightMax)
+                if (height < rightMax)
                 {
                     rightMax = height;
                     rightX = x;
                 }
             }
 
-            for (uint x = centre; x > centre - margin; x--)
+            for (uint x = centre - 1; x > centre - margin; x--)
             {
                 uint height = GetHeight(x);
 
-                if (height > leftMax)
+                if (height < leftMax)
                 {
                     leftMax = height;
                     leftX = x;
@@ -206,11 +206,8 @@ namespace game_cannons
                     
             }
 
-            VertexArray vertexArray = new(PrimitiveType.Lines, 2);
-            vertexArray.Append(new Vertex(new Vector2f(leftX, leftMax), Color.Magenta));
-            vertexArray.Append(new Vertex(new Vector2f(rightX, rightMax), Color.Magenta));
-
-            return vertexArray;
+            centrePoint = new Vector2(centre, centreHeight);
+            return new Vector2[] { new(leftX, leftMax), new(rightX, rightMax) };
 
             uint GetHeight(uint x)
             {
@@ -219,10 +216,6 @@ namespace game_cannons
                   
                     if (mapImage.GetPixel(x, y) == Color.White)
                     {
-                        Console.Write(x);
-                        Console.Write(" ");
-                        Console.Write(y);
-                        Console.WriteLine();
                         return y;
                     }
                 }
