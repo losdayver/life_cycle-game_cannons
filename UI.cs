@@ -50,7 +50,13 @@ namespace game_cannons
             tankTracksSprite.Position = new(centrePoint.X, centrePoint.Y);
             tankTracksSprite.Rotation = (float)angle;
 
-            counter++;
+            counter+=5;
+
+            if (counter > 1024)
+            {
+                counter = 0;
+                landTexture = scene.GenerateScene(128, 400);
+            }
 
             App.window.Draw(tankTracksSprite);
         }

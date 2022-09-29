@@ -104,11 +104,18 @@ namespace game_cannons
         /// </summary>
         /// <param name="depth"> Отвечает за глубину прорисовки -- значение не должно превышать xSize </param>
         /// <param name="maxHeight"> Максимальная высота ландшафта -- значение не должно превышать ySize </param>
-        /// <returns></returns>
+        /// <returns>Возвращает текстуру сгенерированной сцены</returns>
         public RenderTexture GenerateScene(uint depth, uint maxHeight)
         {
             if (depth > ySize || maxHeight > ySize)
                 throw new Exception("Неправильно заданы параметры GenerateScene");
+
+            // Эта проверка необходима для предотвращаения утечек памяти
+            if (map != null) 
+            {
+                map.Dispose();
+                mapImage.Dispose();
+            }
 
             Random rand = new();
             int[] heights = new int[depth + 1];
@@ -174,6 +181,13 @@ namespace game_cannons
             return renderTexure;
         }
 
+        /// <summary>
+        /// Находит вектор по производной в данной точке карты, который будет являться направлением движения танка
+        /// </summary>
+        /// <param name="centre"> Определяет точку, в которой будет осуществляться вычисление </param>
+        /// <param name="margin"> Определяет максимвльный отступ вычислений (поиска локальных максимумов) </param>
+        /// <param name="centrePoint"> Параметр возвращает среднюю точку между высотами результирующих точек </param>
+        /// <returns> Возвращает массив из 2-х векторов, которые являются координатыми полученных локальных максимумов </returns>
         public Vector2[] GetDerivativeVector(uint centre, uint margin, out Vector2 centrePoint)
         {
             uint centreHeight = GetHeight(centre);
@@ -185,7 +199,7 @@ namespace game_cannons
 
             for (uint x = centre + 1; x < centre + margin; x++)
             {
-                uint height = GetHeight(x);
+                uint height = GetHeight(x % xSize);
 
                 if (height < rightMax)
                 {
@@ -196,7 +210,7 @@ namespace game_cannons
 
             for (uint x = centre - 1; x > centre - margin; x--)
             {
-                uint height = GetHeight(x);
+                uint height = GetHeight(x % xSize);
 
                 if (height < leftMax)
                 {
@@ -224,6 +238,8 @@ namespace game_cannons
             }
         }
     }
+
+
 
     //class Map
     //{
