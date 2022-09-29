@@ -206,7 +206,7 @@ namespace game_cannons
                     
             }
 
-            centrePoint = new Vector2(centre, centreHeight);
+            centrePoint = new Vector2(centre, (rightMax + leftMax) / 2);
             return new Vector2[] { new(leftX, leftMax), new(rightX, rightMax) };
 
             uint GetHeight(uint x)

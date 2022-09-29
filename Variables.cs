@@ -46,10 +46,10 @@ namespace game_cannons
 
         static TEXTUTRES()
         {
-            GREENTANKBODY = new(VARIABLES.RESOURCEPATH + "kenney_tankspack\\PNG\\Default size\\tanks_tankGreen_body1.png");
-            TANKTRACKS = new(VARIABLES.RESOURCEPATH + "kenney_tankspack\\PNG\\Default size\\tanks_tankTracks1.png");
-            TURRET = new(VARIABLES.RESOURCEPATH + "kenney_tankspack\\PNG\\Default size\\tanks_turret4.png");
-            LANDTEXTURE = new(VARIABLES.RESOURCEPATH + "location\\moon.png");
+            GREENTANKBODY = new(VARIABLES.RESOURCEPATH + "Tanks&shells\\Default size\\tanks_tankGreen_body1.png");
+            TANKTRACKS = new(VARIABLES.RESOURCEPATH + "Tanks&shells\\Default size\\tanks_tankTracks1.png");
+            TURRET = new(VARIABLES.RESOURCEPATH + "Tanks&shells\\Default size\\tanks_turret4.png");
+            LANDTEXTURE = new(VARIABLES.RESOURCEPATH + "lvl_cosmos\\moon.png");
         }
     }
 }
