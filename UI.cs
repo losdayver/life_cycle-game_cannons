@@ -25,7 +25,7 @@ namespace game_cannons
 
         static UI()
         {
-            landTexture = scene.GenerateScene(128, 400);
+            scene.GenerateSceneHeights(128, 400);
         }
 
         /// <summary>
@@ -35,8 +35,7 @@ namespace game_cannons
         {
             App.window.Clear();
 
-            Sprite sceneSprite = new(landTexture.Texture);
-            App.window.Draw(sceneSprite);
+            App.window.Draw(new Sprite(scene.map.Texture));
 
             Vector2 centrePoint;
             Vector2[] vector = scene.GetDerivativeVector(counter, 8, out centrePoint);
@@ -55,7 +54,7 @@ namespace game_cannons
             if (counter > 1024)
             {
                 counter = 0;
-                landTexture = scene.GenerateScene(128, 400);
+                scene.GenerateSceneHeights(128, 400);
             }
 
             App.window.Draw(tankTracksSprite);

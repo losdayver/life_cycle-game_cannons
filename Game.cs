@@ -87,8 +87,12 @@ namespace game_cannons
         /// <summary>
         /// Текстура сгенерированной карты -- задается при вызове GenerateScene
         /// </summary>
-        RenderTexture? map;
-        Image? mapImage;
+        public RenderTexture? map;
+
+        /// <summary>
+        /// Массив высот задается после вызова GenerateScene
+        /// </summary>
+        uint[] sceneHeights;
 
         public Scene(uint xSize, uint ySize)
         {
@@ -97,6 +101,8 @@ namespace game_cannons
 
             this.xSize = xSize;
             this.ySize = ySize;
+
+            sceneHeights = new uint[xSize];
         }
 
         /// <summary>
@@ -105,7 +111,7 @@ namespace game_cannons
         /// <param name="depth"> Отвечает за глубину прорисовки -- значение не должно превышать xSize </param>
         /// <param name="maxHeight"> Максимальная высота ландшафта -- значение не должно превышать ySize </param>
         /// <returns>Возвращает текстуру сгенерированной сцены</returns>
-        public RenderTexture GenerateScene(uint depth, uint maxHeight)
+        public void GenerateSceneHeights(uint depth, uint maxHeight)
         {
             if (depth > ySize || maxHeight > ySize)
                 throw new Exception("Неправильно заданы параметры GenerateScene");
@@ -114,7 +120,6 @@ namespace game_cannons
             if (map != null) 
             {
                 map.Dispose();
-                mapImage.Dispose();
             }
 
             Random rand = new();
@@ -156,8 +161,6 @@ namespace game_cannons
                 Recurse(offset + depth / i, i * 2);
             }
 
-            RenderTexture renderTexure = new RenderTexture(xSize, ySize);
-
             for (uint x = 0; x < xSize; x++)
             {
                 int startPointer = (int)(((float)depth / xSize) * x);
@@ -165,20 +168,44 @@ namespace game_cannons
                 float step = xSize / depth;
                 float k = (float)(heights[endPointer] - heights[startPointer]) / step;
 
-                VertexArray line = new VertexArray(PrimitiveType.Lines);
-                line.Append(new Vertex(new Vector2f(x, 0), Color.White));
-                line.Append(new Vertex(new Vector2f(x, k * (x - step * startPointer) + heights[startPointer] - 1), Color.White));
-                    
-                renderTexure.Draw(line);
+                sceneHeights[x] = (uint)(k * (x - step * startPointer) + heights[startPointer] - 1);
             }
 
-            map = renderTexure;
-            mapImage = renderTexure.Texture.CopyToImage();
+            GenerateMap();
+        }
 
-            Sprite blendSprite = new Sprite(TEXTUTRES.LANDTEXTURE);
+        public void GenerateMap()
+        {
+            map = new RenderTexture(xSize, ySize);
+
+            Texture bnwMap = GetBnWMap();
+            Sprite bnwSprite = new Sprite(bnwMap);
+            Sprite landSprite = new Sprite(TEXTUTRES.LANDTEXTURE);
+
+            map.Draw(landSprite);
             RenderStates renderStates = new(BlendMode.Multiply);
-            blendSprite.Draw(renderTexure, renderStates);
-            return renderTexure;
+            map.Draw(bnwSprite, renderStates);
+
+            bnwMap.Dispose();
+        }
+
+        /// <summary>
+        /// Генерирует черно-белую текстуру нв основе sceneHeights
+        /// </summary>
+        /// <returns> Возвращает данную текстуру </returns>
+        public Texture GetBnWMap()
+        {
+            Image img = new Image(xSize, ySize);
+
+            for (uint x = 0; x < xSize; x++)
+            {
+                for (uint y = 0; y < sceneHeights[x]; y++)
+                {
+                    img.SetPixel(x, y, Color.White);
+                }
+            }
+
+            return new Texture(img);
         }
 
         /// <summary>
@@ -190,18 +217,18 @@ namespace game_cannons
         /// <returns> Возвращает массив из 2-х векторов, которые являются координатыми полученных локальных максимумов </returns>
         public Vector2[] GetDerivativeVector(uint centre, uint margin, out Vector2 centrePoint)
         {
-            uint centreHeight = GetHeight(centre);
+            uint centreHeight = sceneHeights[centre];
 
-            uint leftMax = ySize;
-            uint rightMax = ySize;
+            uint leftMax = 0;
+            uint rightMax = 0;
             uint leftX = centre - margin;
             uint rightX = centre + margin;
 
             for (uint x = centre + 1; x < centre + margin; x++)
             {
-                uint height = GetHeight(x % xSize);
+                uint height = sceneHeights[x % xSize];
 
-                if (height < rightMax)
+                if (height > rightMax)
                 {
                     rightMax = height;
                     rightX = x;
@@ -210,9 +237,9 @@ namespace game_cannons
 
             for (uint x = centre - 1; x > centre - margin; x--)
             {
-                uint height = GetHeight(x % xSize);
+                uint height = sceneHeights[x % xSize];
 
-                if (height < leftMax)
+                if (height > leftMax)
                 {
                     leftMax = height;
                     leftX = x;
@@ -220,25 +247,25 @@ namespace game_cannons
                     
             }
 
-            centrePoint = new Vector2(centre, (rightMax + leftMax) / 2);
-            return new Vector2[] { new(leftX, leftMax), new(rightX, rightMax) };
-
-            uint GetHeight(uint x)
-            {
-                for (uint y = 0; y < ySize; y++)
-                {
-                  
-                    if (mapImage.GetPixel(x, y) == Color.White)
-                    {
-                        return y;
-                    }
-                }
-                        
-                return 0;
-            }
+            centrePoint = new Vector2(centre, ySize - (rightMax + leftMax) / 2);
+            return new Vector2[] { new(leftX, ySize - leftMax), new(rightX, ySize - rightMax) };
         }
     }
 
+    /// <summary>
+    /// Данный класс описывает игровую сессию -- сцену, танки, и объекты на сцене, а также другие параметры, связанные с игровым процессом
+    /// </summary>
+    public class Session
+    {
+        Tank controlledTank;
+        Scene scene;
+
+
+        public Session(List<Tank> tanks, string theme) 
+        {
+
+        }
+    }
 
 
     //class Map
