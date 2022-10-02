@@ -43,6 +43,7 @@ namespace game_cannons
         public static Texture TANKTRACKS;
         public static Texture TURRET;
         public static Texture LANDTEXTURE;
+        public static Texture ARROW;
 
         static TEXTUTRES()
         {
@@ -50,6 +51,7 @@ namespace game_cannons
             TANKTRACKS = new(VARIABLES.RESOURCEPATH + "Tanks&shells\\Default size\\tanks_tankTracks1.png");
             TURRET = new(VARIABLES.RESOURCEPATH + "Tanks&shells\\Default size\\tanks_turret4.png");
             LANDTEXTURE = new(VARIABLES.RESOURCEPATH + "lvl_cosmos\\moon.png");
+            ARROW = new(VARIABLES.RESOURCEPATH + "Tanks&shells\\Default size\\tank_arrowFull.png");
         }
     }
 }

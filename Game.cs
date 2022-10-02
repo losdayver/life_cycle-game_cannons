@@ -9,6 +9,8 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using System.Dynamic;
+using static System.Formats.Asn1.AsnWriter;
+using System.Diagnostics.Metrics;
 
 namespace game_cannons
 {
@@ -19,13 +21,11 @@ namespace game_cannons
     internal static class Game
     {
         // Допустимые значения переменной: MENU, SETTINGS, GAME_SESSION
-        public static string GAME_STATE = "MENU";
-        public static Tank testTank;
+        public static string GAME_STATE = "GAME_SESSION";
+        public static Session session = new();
 
         static Game()
         {
-            testTank = new Tank();
-            Scene scnece = new(1024, 640);
         }
 
         /// <summary>
@@ -33,25 +33,37 @@ namespace game_cannons
         /// </summary>
         public static void Tick()
         {
-            testTank.Tick();
+            session.Tick();
         }
     }
 
     public class Tank
     {
+        Session session;
         string playerName = "";
-        float maxSpeed = 10f;
+        float maxSpeed = 2f;
         float acceleration = 0.2f;
         float currentSpeed = 0f;
-        public float turretAngle = 200f;
+        public float turretAngle = 270f;
         float turretRotationSpeed = 2.5f;
-        public float x = 0f;
-        public float y = 100f;
+        public float x = 100;
+        public float y = 0;
+        public float angle = 0f;
 
-        public Tank() { }
+        public Tank(Session s) 
+        {
+            session = s;
+        }
 
         public void Tick()
         {
+            Console.WriteLine(x);
+            Vector2 centrePoint;
+            Vector2[] vector = session.scene.GetDerivativeVector((uint)x, 8, out centrePoint);
+
+            y = centrePoint.Y;
+            angle = (float)((Math.Atan((double)(vector[1].Y - vector[0].Y) / 8)) * (180 / Math.PI));
+
             if (KEYS.KEY_LEFT && currentSpeed > -maxSpeed)
                 currentSpeed -= acceleration;
             else if (KEYS.KEY_RIGHT && currentSpeed < maxSpeed)
@@ -64,7 +76,12 @@ namespace game_cannons
                     currentSpeed = 0;
             }
 
-            x += currentSpeed;
+            x = x + currentSpeed * (Math.Abs(vector[1].Y / vector[0].Y));
+
+            x = x % session.scene.xSize;
+
+            if (x <= 0)
+                x = session.scene.xSize - 1;
 
             if (KEYS.KEY_UP && turretAngle > 180)
                 turretAngle -= turretRotationSpeed;
@@ -81,8 +98,8 @@ namespace game_cannons
         /// <summary>
         /// Размер сцены по горизонтали в пикселях -- значение должно быть 2^n
         /// </summary>
-        uint xSize;
-        uint ySize;
+        public uint xSize;
+        public uint ySize;
         
         /// <summary>
         /// Текстура сгенерированной карты -- задается при вызове GenerateScene
@@ -187,6 +204,8 @@ namespace game_cannons
             map.Draw(bnwSprite, renderStates);
 
             bnwMap.Dispose();
+            bnwSprite.Dispose();
+            landSprite.Dispose();
         }
 
         /// <summary>
@@ -204,7 +223,7 @@ namespace game_cannons
                     img.SetPixel(x, y, Color.White);
                 }
             }
-
+            
             return new Texture(img);
         }
 
@@ -257,16 +276,20 @@ namespace game_cannons
     /// </summary>
     public class Session
     {
-        Tank controlledTank;
-        Scene scene;
+        public Tank controlledTank;
+        public Scene scene = new(1024, 600);
 
-
-        public Session(List<Tank> tanks, string theme) 
+        public Session() 
         {
+            controlledTank = new(this);
+            scene.GenerateSceneHeights(128, 600);
+        }
 
+        public void Tick()
+        {
+            controlledTank.Tick();
         }
     }
-
 
     //class Map
     //{

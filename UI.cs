@@ -19,13 +19,8 @@ namespace game_cannons
     /// </summary>
     internal static class UI
     {
-        static RenderTexture landTexture;
-        static Scene scene = new(1024, 600);
-        static uint counter = 50;
-
         static UI()
         {
-            scene.GenerateSceneHeights(128, 400);
         }
 
         /// <summary>
@@ -35,29 +30,36 @@ namespace game_cannons
         {
             App.window.Clear();
 
-            App.window.Draw(new Sprite(scene.map.Texture));
+            App.window.Draw(new Sprite(Game.session.scene.map.Texture));
 
-            Vector2 centrePoint;
-            Vector2[] vector = scene.GetDerivativeVector(counter, 8, out centrePoint);
-
-            double angle = (Math.Atan((double)(vector[1].Y - vector[0].Y) / 8)) * (180 / Math.PI);
             Sprite tankTracksSprite = new(TEXTUTRES.TANKTRACKS);
+            Sprite tankBodySprite = new(TEXTUTRES.GREENTANKBODY);
+            Sprite tankTurretSprite = new(TEXTUTRES.TURRET);
 
-            
             tankTracksSprite.Scale /= 3;
-            tankTracksSprite.Origin = new Vector2f(TEXTUTRES.TANKTRACKS.Size.X / 2, TEXTUTRES.TANKTRACKS.Size.Y * (1 - 1/2));
-            tankTracksSprite.Position = new(centrePoint.X, centrePoint.Y);
-            tankTracksSprite.Rotation = (float)angle;
+            tankTracksSprite.Origin = new Vector2f(TEXTUTRES.TANKTRACKS.Size.X / 2, TEXTUTRES.TANKTRACKS.Size.Y * (1 - 2/3));
+            tankTracksSprite.Position = new(Game.session.controlledTank.x, Game.session.controlledTank.y);
+            tankTracksSprite.Rotation = Game.session.controlledTank.angle;
 
-            counter+=5;
+            tankBodySprite.Scale /= 3;
+            tankBodySprite.Origin = new Vector2f(TEXTUTRES.GREENTANKBODY.Size.X / 2, TEXTUTRES.GREENTANKBODY.Size.Y);
+            tankBodySprite.Position = new(Game.session.controlledTank.x, Game.session.controlledTank.y);
+            tankBodySprite.Rotation = Game.session.controlledTank.angle;
 
-            if (counter > 1024)
-            {
-                counter = 0;
-                scene.GenerateSceneHeights(128, 400);
-            }
+            tankTurretSprite.Position = new(
+                tankBodySprite.Position.X,
+                tankBodySprite.Position.Y - tankBodySprite.Origin.Y / 4);
+            tankTurretSprite.Rotation = Game.session.controlledTank.turretAngle;
+            tankTurretSprite.Scale /= 2f;
+            tankTurretSprite.Origin = new Vector2f(0, TEXTUTRES.TURRET.Size.Y * 0.5f);
 
+            if (Game.session.controlledTank.turretAngle < 270)
+                tankBodySprite.Scale = new(-tankBodySprite.Scale.X, tankBodySprite.Scale.Y);
+
+            App.window.Draw(tankTurretSprite);
+            App.window.Draw(tankBodySprite);
             App.window.Draw(tankTracksSprite);
+            
         }
     }
 }
