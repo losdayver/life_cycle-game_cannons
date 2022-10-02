@@ -32,6 +32,8 @@ namespace game_cannons
             //TODO
             window.KeyPressed += KeyPressed;
             window.KeyReleased += KeyReleased;
+            window.MouseButtonPressed += MousePressed;
+            window.MouseButtonReleased += MouseReleased;
             window.Closed += OnClose;
 
             //Map map = new Map(800, 600);
@@ -89,6 +91,32 @@ namespace game_cannons
             void setState(Keyboard.Key sfmlInput, ref bool key)
             {
                 if (e.Code == sfmlInput) key = false;
+            }
+        }
+
+        private static void MousePressed(object sender, MouseButtonEventArgs e)
+        {
+            var window = (Window)sender;
+
+            setState(Mouse.Button.Left, ref KEYS.MOUSE_LEFT);
+            setState(Mouse.Button.Right, ref KEYS.MOUSE_RIGHT);
+
+            void setState(Mouse.Button sfmlInput, ref bool button)
+            {
+                if (e.Button == sfmlInput) button = true;
+            }
+        }
+
+        private static void MouseReleased(object sender, MouseButtonEventArgs e)
+        {
+            var window = (Window)sender;
+
+            setState(Mouse.Button.Left, ref KEYS.MOUSE_LEFT);
+            setState(Mouse.Button.Right, ref KEYS.MOUSE_RIGHT);
+
+            void setState(Mouse.Button sfmlInput, ref bool button)
+            {
+                if (e.Button == sfmlInput) button = false;
             }
         }
 

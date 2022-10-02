@@ -21,7 +21,7 @@ namespace game_cannons
     internal static class Game
     {
         // Допустимые значения переменной: MENU, SETTINGS, GAME_SESSION
-        public static string GAME_STATE = "GAME_SESSION";
+        public static string GAME_STATE = "SETTINGS";
         public static Session session = new();
 
         static Game()
@@ -33,7 +33,18 @@ namespace game_cannons
         /// </summary>
         public static void Tick()
         {
-            session.Tick();
+            if (GAME_STATE == "GAME_SESSION")
+            {
+                session.Tick();
+            }
+            else if (GAME_STATE == "MENU")
+            {
+                
+            }
+            else if (GAME_STATE == "SETTINGS")
+            {
+                // Здесь будет код для настроек
+            }
         }
     }
 
@@ -57,7 +68,6 @@ namespace game_cannons
 
         public void Tick()
         {
-            Console.WriteLine(x);
             Vector2 centrePoint;
             Vector2[] vector = session.scene.GetDerivativeVector((uint)x, 8, out centrePoint);
 

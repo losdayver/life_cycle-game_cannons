@@ -16,6 +16,9 @@ namespace game_cannons
         public static bool KEY_LEFT = false;
         public static bool KEY_DOWN = false;
         public static bool KEY_RIGHT = false;
+
+        public static bool MOUSE_LEFT = false;
+        public static bool MOUSE_RIGHT = false;
     }
 
     /// <summary>
