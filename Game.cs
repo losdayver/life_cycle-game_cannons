@@ -195,13 +195,12 @@ namespace game_cannons
         {
             map = new RenderTexture(xSize, ySize);
 
-            Texture bnwMap = GetBnWMap();
+            Texture bnwMap = GetBnTMap();
             Sprite bnwSprite = new Sprite(bnwMap);
             Sprite landSprite = new Sprite(TEXTUTRES.LANDTEXTURE);
 
-            map.Draw(landSprite);
-            RenderStates renderStates = new(BlendMode.Multiply);
-            map.Draw(bnwSprite, renderStates);
+            map.Draw(bnwSprite);
+            map.Draw(landSprite, new RenderStates(BlendMode.Multiply));
 
             bnwMap.Dispose();
             bnwSprite.Dispose();
@@ -209,12 +208,12 @@ namespace game_cannons
         }
 
         /// <summary>
-        /// Генерирует черно-белую текстуру нв основе sceneHeights
+        /// Генерирует прозрачно-белую текстуру нв основе sceneHeights
         /// </summary>
         /// <returns> Возвращает данную текстуру </returns>
-        public Texture GetBnWMap()
+        public Texture GetBnTMap()
         {
-            Image img = new Image(xSize, ySize);
+            Image img = new Image(xSize, ySize, Color.Transparent);
 
             for (uint x = 0; x < xSize; x++)
             {
@@ -282,7 +281,7 @@ namespace game_cannons
         public Session() 
         {
             controlledTank = new(this);
-            scene.GenerateSceneHeights(128, 600);
+            scene.GenerateSceneHeights(128, 300);
         }
 
         public void Tick()

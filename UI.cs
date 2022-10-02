@@ -30,11 +30,11 @@ namespace game_cannons
         {
             App.window.Clear();
 
-            App.window.Draw(new Sprite(Game.session.scene.map.Texture));
-
             Sprite tankTracksSprite = new(TEXTUTRES.TANKTRACKS);
             Sprite tankBodySprite = new(TEXTUTRES.GREENTANKBODY);
             Sprite tankTurretSprite = new(TEXTUTRES.TURRET);
+            Sprite backGround = new(TEXTUTRES.BACKGROUND);
+            backGround.Scale /= 2;
 
             tankTracksSprite.Scale /= 3;
             tankTracksSprite.Origin = new Vector2f(TEXTUTRES.TANKTRACKS.Size.X / 2, TEXTUTRES.TANKTRACKS.Size.Y * (1 - 2/3));
@@ -56,6 +56,8 @@ namespace game_cannons
             if (Game.session.controlledTank.turretAngle < 270)
                 tankBodySprite.Scale = new(-tankBodySprite.Scale.X, tankBodySprite.Scale.Y);
 
+            App.window.Draw(backGround);
+            App.window.Draw(new Sprite(Game.session.scene.map.Texture));
             App.window.Draw(tankTurretSprite);
             App.window.Draw(tankBodySprite);
             App.window.Draw(tankTracksSprite);
