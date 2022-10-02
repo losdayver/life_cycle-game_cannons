@@ -21,7 +21,7 @@ namespace game_cannons
     internal static class Game
     {
         // Допустимые значения переменной: MENU, SETTINGS, GAME_SESSION
-        public static string GAME_STATE = "SETTINGS";
+        public static string GAME_STATE = "GAME_SESSION";
         public static Session session = new();
 
         static Game()
