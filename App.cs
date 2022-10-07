@@ -72,6 +72,7 @@ namespace game_cannons
             setState(Keyboard.Key.Down, ref KEYS.KEY_DOWN);
             setState(Keyboard.Key.Left, ref KEYS.KEY_LEFT);
             setState(Keyboard.Key.Right, ref KEYS.KEY_RIGHT);
+            setState(Keyboard.Key.Space, ref KEYS.KEY_SPACE);
 
             void setState(Keyboard.Key sfmlInput, ref bool key)
             {
@@ -87,6 +88,7 @@ namespace game_cannons
             setState(Keyboard.Key.Down, ref KEYS.KEY_DOWN);
             setState(Keyboard.Key.Left, ref KEYS.KEY_LEFT);
             setState(Keyboard.Key.Right, ref KEYS.KEY_RIGHT);
+            setState(Keyboard.Key.Space, ref KEYS.KEY_SPACE);
 
             void setState(Keyboard.Key sfmlInput, ref bool key)
             {

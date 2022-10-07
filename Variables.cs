@@ -16,6 +16,7 @@ namespace game_cannons
         public static bool KEY_LEFT = false;
         public static bool KEY_DOWN = false;
         public static bool KEY_RIGHT = false;
+        public static bool KEY_SPACE = false;
 
         public static bool MOUSE_LEFT = false;
         public static bool MOUSE_RIGHT = false;
@@ -40,7 +41,7 @@ namespace game_cannons
     /// <summary>
     /// Данный статический класс отвечает за хранения текстур типа SFML.Texture
     /// </summary>
-    internal static class TEXTUTRES
+    internal static class TEXTURES
     {
         public static Texture GREENTANKBODY;
         public static Texture TANKTRACKS;
@@ -48,15 +49,17 @@ namespace game_cannons
         public static Texture LANDTEXTURE;
         public static Texture ARROW;
         public static Texture BACKGROUND;
+        public static Texture BULLET;
 
-        static TEXTUTRES()
+        static TEXTURES()
         {
             GREENTANKBODY = new(VARIABLES.RESOURCEPATH + "Tanks&shells\\Default size\\tanks_tankGreen_body1.png");
-            TANKTRACKS = new(VARIABLES.RESOURCEPATH + "Tanks&shells\\Default size\\tanks_tankTracks1.png");
+            TANKTRACKS = new(VARIABLES.RESOURCEPATH + "Tanks&shells\\Default size\\tanks_tankTracks2.png");
             TURRET = new(VARIABLES.RESOURCEPATH + "Tanks&shells\\Default size\\tanks_turret4.png");
             LANDTEXTURE = new(VARIABLES.RESOURCEPATH + "lvl_cosmos\\moon.png");
             ARROW = new(VARIABLES.RESOURCEPATH + "Tanks&shells\\Default size\\tank_arrowFull.png");
             BACKGROUND = new(VARIABLES.RESOURCEPATH + "lvl_cosmos\\background_space_2.png");
+            BULLET = new(VARIABLES.RESOURCEPATH + "Tanks&shells\\Default size\\bulletTest.png");
         }
     }
 }

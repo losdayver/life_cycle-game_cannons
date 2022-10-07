@@ -34,19 +34,20 @@ namespace game_cannons
             {
                 App.window.Clear();
 
-                Sprite tankTracksSprite = new(TEXTUTRES.TANKTRACKS);
-                Sprite tankBodySprite = new(TEXTUTRES.GREENTANKBODY);
-                Sprite tankTurretSprite = new(TEXTUTRES.TURRET);
-                Sprite backGround = new(TEXTUTRES.BACKGROUND);
+                Sprite tankTracksSprite = new(TEXTURES.TANKTRACKS);
+                Sprite tankBodySprite = new(TEXTURES.GREENTANKBODY);
+                Sprite tankTurretSprite = new(TEXTURES.TURRET);
+                Sprite backGround = new(TEXTURES.BACKGROUND);
+                Sprite bullet = new(TEXTURES.BULLET);
                 backGround.Scale /= 2;
 
                 tankTracksSprite.Scale /= 3;
-                tankTracksSprite.Origin = new Vector2f(TEXTUTRES.TANKTRACKS.Size.X / 2, TEXTUTRES.TANKTRACKS.Size.Y * (1 - 2 / 3));
+                tankTracksSprite.Origin = new Vector2f(TEXTURES.TANKTRACKS.Size.X / 2, TEXTURES.TANKTRACKS.Size.Y * (1 - 2 / 3));
                 tankTracksSprite.Position = new(Game.session.controlledTank.x, Game.session.controlledTank.y);
                 tankTracksSprite.Rotation = Game.session.controlledTank.angle;
 
                 tankBodySprite.Scale /= 3;
-                tankBodySprite.Origin = new Vector2f(TEXTUTRES.GREENTANKBODY.Size.X / 2, TEXTUTRES.GREENTANKBODY.Size.Y);
+                tankBodySprite.Origin = new Vector2f(TEXTURES.GREENTANKBODY.Size.X / 2, TEXTURES.GREENTANKBODY.Size.Y);
                 tankBodySprite.Position = new(Game.session.controlledTank.x, Game.session.controlledTank.y);
                 tankBodySprite.Rotation = Game.session.controlledTank.angle;
 
@@ -55,21 +56,32 @@ namespace game_cannons
                     tankBodySprite.Position.Y - tankBodySprite.Origin.Y / 4);
                 tankTurretSprite.Rotation = Game.session.controlledTank.turretAngle;
                 tankTurretSprite.Scale /= 2f;
-                tankTurretSprite.Origin = new Vector2f(0, TEXTUTRES.TURRET.Size.Y * 0.5f);
+                tankTurretSprite.Origin = new Vector2f(0, TEXTURES.TURRET.Size.Y * 0.5f);
 
                 if (Game.session.controlledTank.turretAngle < 270)
                     tankBodySprite.Scale = new(-tankBodySprite.Scale.X, tankBodySprite.Scale.Y);
+
+                if (Game.session.bullet != null)
+                {
+                    bullet.Position = new(Game.session.bullet.x, Game.session.bullet.y);
+                }
+                
 
                 App.window.Draw(backGround);
                 App.window.Draw(new Sprite(Game.session.scene.map.Texture));
                 App.window.Draw(tankTurretSprite);
                 App.window.Draw(tankBodySprite);
                 App.window.Draw(tankTracksSprite);
+                if (Game.session.bullet != null)
+                {
+                    App.window.Draw(bullet);
+                }
+                    
             }
             else if (Game.GAME_STATE == "SETTINGS")
             {
                 App.window.Clear();
-                Sprite s = new(TEXTUTRES.GREENTANKBODY);
+                Sprite s = new(TEXTURES.GREENTANKBODY);
 
 
                 s.Position = new(Mouse.GetPosition().X - App.window.Position.X, Mouse.GetPosition().Y - App.window.Position.Y);
