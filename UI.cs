@@ -42,6 +42,7 @@ namespace game_cannons
                 List<Sprite> tanksTracksSprite = new();
                 List<Sprite> tanksBodySprite = new();
                 List<Sprite> tanksTurretSprite = new();
+                List<Sprite> tanksHPSprite = new();
                 for (int i = 0; i < 3; i++)
                 {
                     tanksTracksSprite.Add(new(TEXTURES.TANKTRACKS));
@@ -69,6 +70,25 @@ namespace game_cannons
 
                     if (Game.session.tanks[i].turretAngle < 270)
                         tanksBodySprite[i].Scale = new(-tanksBodySprite[i].Scale.X, tanksBodySprite[i].Scale.Y);
+
+                    
+                    
+                    if (Game.session.tanks[i].hp == 3)
+                    {
+                        tanksHPSprite.Add(new(TEXTURES.HP3));
+                    }
+                    else if (Game.session.tanks[i].hp == 2)
+                    {
+                        tanksHPSprite.Add(new(TEXTURES.HP2));
+                    }
+                    else
+                    {
+                        tanksHPSprite.Add(new(TEXTURES.HP1));
+                    }
+
+                    tanksHPSprite[i].Position = new(Game.session.tanks[i].x - 22, 
+                        tanksTurretSprite[i].Position.Y - 20);
+                    
                 }
 
                 if (Game.session.bullet != null)
@@ -86,6 +106,7 @@ namespace game_cannons
                         App.window.Draw(tanksTurretSprite[i]);
                         App.window.Draw(tanksBodySprite[i]);
                         App.window.Draw(tanksTracksSprite[i]);
+                        App.window.Draw(tanksHPSprite[i]);
                     }
 
                 }

@@ -36,9 +36,6 @@ namespace game_cannons
             window.MouseButtonReleased += MouseReleased;
             window.Closed += OnClose;
 
-            //Map map = new Map(800, 600);
-            //map.GenerateMap(4);
-
             while (window.IsOpen)
             {
                 // Запуск обработчика событий запускается каждый кадр приложения

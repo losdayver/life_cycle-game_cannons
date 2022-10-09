@@ -22,7 +22,7 @@ namespace game_cannons
     internal static class Game
     {
         // Допустимые значения переменной: MENU, SETTINGS, GAME_SESSION
-        public static string GAME_STATE = "SETTINGS";
+        public static string GAME_STATE = "GAME_SESSION";
         public static Session session = new();
 
         static Game()
@@ -78,16 +78,25 @@ namespace game_cannons
                 bool IsNotCollision = this.y < App.window.Size.Y - Game.session.scene.sceneHeights[(uint)x];
                 if (IsNotCollision)
                 {
+                    bool turnAlreadyPlused = false;
                     for (int i = 0; i < 3; i++)
                     {
                         bool IsTarget = x >= Game.session.tanks[i].x - 10 && x <= Game.session.tanks[i].x + 10;
                         IsTarget = IsTarget && y >= Game.session.tanks[i].y - 10 && y <= Game.session.tanks[i].y + 10;
                         if (IsTarget && Game.session.tanks[i].status)
                         {
-                            Game.session.tanks[i].status = false;
+                            Game.session.tanks[i].hp--;
+                            if (Game.session.tanks[i].hp == 0)
+                            {
+                                Game.session.tanks[i].status = false;
+                            }
                             Game.session.bullet = null;
                             Game.session.bulletCreated = false;
-                            Game.session.turn++;
+                            if (!turnAlreadyPlused)  // без этого если за один выстрел ранил 2 цели - +2 хода
+                            {
+                                Game.session.turn++;
+                                turnAlreadyPlused = true;
+                            }
                         }
                     }
                     x += xSpeed;
@@ -122,6 +131,7 @@ namespace game_cannons
         public float y = 0;
         public float angle = 0f;
         public bool status = true; // true - жив, false - уничтожен
+        public int hp = 3; // кол-во допустимых попаданий
         Vector2[] vector;
 
         public Tank(Session s, float x) 
@@ -160,12 +170,18 @@ namespace game_cannons
                     currentSpeed = 0;
             }
 
-            x = x + currentSpeed * (Math.Abs(vector[1].Y / vector[0].Y));
+            bool InWindow = x + currentSpeed * (Math.Abs(vector[1].Y / vector[0].Y)) < session.scene.xSize - 15;
+            InWindow = InWindow && x + currentSpeed * (Math.Abs(vector[1].Y / vector[0].Y)) > 15;
+            if (InWindow)
+            {
+                x = x + currentSpeed * (Math.Abs(vector[1].Y / vector[0].Y));
+            }
+            
 
-            x = x % session.scene.xSize;
+            /*x = x % session.scene.xSize;
 
             if (x <= 0)
-                x = session.scene.xSize - 1;
+                x = session.scene.xSize - 1;*/
 
             if (KEYS.KEY_UP && turretAngle > 180)
                 turretAngle -= turretRotationSpeed;
