@@ -261,6 +261,10 @@ namespace game_cannons
         /// </summary>
         public void GenerateMap()
         {
+            if (map != null)
+            {
+                map.Dispose();
+            }
             map = new RenderTexture(xSize, ySize);
 
             Texture bnwMap = GetBnTMap();
@@ -276,7 +280,7 @@ namespace game_cannons
         }
 
         /// <summary>
-        /// Генерирует прозрачно-белую текстуру нв основе sceneHeights
+        /// Генерирует прозрачно-белую текстуру на основе sceneHeights
         /// </summary>
         /// <returns> Возвращает данную текстуру </returns>
         public Texture GetBnTMap()
@@ -339,8 +343,16 @@ namespace game_cannons
 
         public void Hit(float x, float y)
         {
+            //GenerateCrater((uint)x, (uint)y);
+            GenerateMap();
+            sceneHeights[(uint)x] += 20;
             Game.session.bullet = null;
             Game.session.bulletCreated = false;
+        }
+
+        public void GenerateCrater(uint x, uint y)
+        {
+            //for (int )
         }
     }
 
