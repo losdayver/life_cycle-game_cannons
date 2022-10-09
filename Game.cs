@@ -78,6 +78,18 @@ namespace game_cannons
                 bool IsNotCollision = this.y < App.window.Size.Y - Game.session.scene.sceneHeights[(uint)x];
                 if (IsNotCollision)
                 {
+                    for (int i = 0; i < 3; i++)
+                    {
+                        bool IsTarget = x >= Game.session.tanks[i].x - 10 && x <= Game.session.tanks[i].x + 10;
+                        IsTarget = IsTarget && y >= Game.session.tanks[i].y - 10 && y <= Game.session.tanks[i].y + 10;
+                        if (IsTarget && Game.session.tanks[i].status)
+                        {
+                            Game.session.tanks[i].status = false;
+                            Game.session.bullet = null;
+                            Game.session.bulletCreated = false;
+                            Game.session.turn++;
+                        }
+                    }
                     x += xSpeed;
                     y += ySpeed;
                 }
@@ -107,23 +119,34 @@ namespace game_cannons
         public float turretAngle = 270f;
         float turretRotationSpeed = 2.5f;
         public float x;
-        public float y;
+        public float y = 0;
         public float angle = 0f;
+        public bool status = true; // true - жив, false - уничтожен
+        Vector2[] vector;
 
-        public Tank(Session s, float x, float y) 
+        public Tank(Session s, float x) 
         {
             session = s;
             this.x = x;
-            this.y = y;
+        }
+
+        public void Land()  // чтобы танки после каждого хода корректно стояли на ландшафте
+        {
+            Vector2 centrePoint;
+            vector = session.scene.GetDerivativeVector((uint)x, 8, out centrePoint);
+
+            y = centrePoint.Y;
+
+            angle = (float)((Math.Atan((double)(vector[1].Y - vector[0].Y) / 8)) * (180 / Math.PI));
+            
         }
 
         public void Tick()
         {
-            Vector2 centrePoint;
-            Vector2[] vector = session.scene.GetDerivativeVector((uint)x, 8, out centrePoint);
-
-            y = centrePoint.Y;
-            angle = (float)((Math.Atan((double)(vector[1].Y - vector[0].Y) / 8)) * (180 / Math.PI));
+            for (int i = 0; i < 3; i++)
+            {
+                Game.session.tanks[i].Land();
+            }
 
             if (KEYS.KEY_LEFT && currentSpeed > -maxSpeed)
                 currentSpeed -= acceleration;
@@ -356,8 +379,8 @@ namespace game_cannons
 
         public void GenerateCrater(uint x, uint y)
         {
-            uint damage = 1;
-            for (uint i = x - 10; i <= x; i++)
+            uint damage = 5;
+            for (uint i = x - 15; i <= x; i++)
             {
                 if ((i > 0 && i < App.window.Size.X) && (sceneHeights[i] > 0))
                 {
@@ -367,7 +390,7 @@ namespace game_cannons
                 
             }
             damage--;
-            for (uint i = x+1; i <= x + 10; i++)
+            for (uint i = x+1; i <= x + 15; i++)
             {
                 if ((i > 0 && i < App.window.Size.X) && (sceneHeights[i] > 0))
                 {
@@ -392,14 +415,31 @@ namespace game_cannons
 
         public Session() 
         {
-            tanks.Add(new Tank(this, 100, 0));
-            tanks.Add(new Tank(this, 500, 0));
-            tanks.Add(new Tank(this, 900, 0));
+            tanks.Add(new Tank(this, 100));
+            tanks.Add(new Tank(this, 500));
+            tanks.Add(new Tank(this, 900));
             scene.GenerateSceneHeights(128, 300);
         }
 
         public void Tick()
         {
+            int aliveCount = 0;
+            for (int i = 0; i < 3; i++)
+            {
+                if (tanks[i].status)
+                {
+                    aliveCount++;
+                }
+            }
+            if (aliveCount <= 1)
+            {
+                Console.WriteLine("Game has ended!");
+                App.window.Close();
+            }
+            while (!tanks[turn % tanks.Count].status)
+            {
+                turn++;
+            }
             controlledTank = tanks[turn % tanks.Count];
             controlledTank.Tick();
             if (bullet != null)

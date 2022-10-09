@@ -42,7 +42,7 @@ namespace game_cannons
                 List<Sprite> tanksBodySprite = new();
                 List<Sprite> tanksTurretSprite = new();
                 for (int i = 0; i < 3; i++)
-                {
+                {                   
                     tanksTracksSprite.Add(new(TEXTURES.TANKTRACKS));
                     tanksBodySprite.Add(new(TEXTURES.GREENTANKBODY));
                     tanksTurretSprite.Add(new(TEXTURES.TURRET));
@@ -80,9 +80,13 @@ namespace game_cannons
                 App.window.Draw(new Sprite(Game.session.scene.map.Texture));
                 for (int i = 0; i < 3; i++)
                 {
-                    App.window.Draw(tanksTurretSprite[i]);
-                    App.window.Draw(tanksBodySprite[i]);
-                    App.window.Draw(tanksTracksSprite[i]);
+                    if (Game.session.tanks[i].status)
+                    {
+                        App.window.Draw(tanksTurretSprite[i]);
+                        App.window.Draw(tanksBodySprite[i]);
+                        App.window.Draw(tanksTracksSprite[i]);
+                    }
+                    
                 }
                 
                 if (Game.session.bullet != null)
