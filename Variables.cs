@@ -52,6 +52,8 @@ namespace game_cannons
         public static Texture BACKGROUND;
         public static Texture BULLET;
         public static Texture ARROW_CURSOR;
+        public static Texture ARROW_LEFT;
+        public static Texture ARROW_RIGHT;
 
         static TEXTURES()
         {
@@ -63,6 +65,8 @@ namespace game_cannons
             BACKGROUND = new(VARIABLES.RESOURCEPATH + "lvl_cosmos\\background_space_2.png");
             BULLET = new(VARIABLES.RESOURCEPATH + "Tanks&shells\\Default size\\bulletTest.png");
             ARROW_CURSOR = new(VARIABLES.RESOURCEPATH + "Icons\\arrow-cursor.png");
+            ARROW_LEFT = new(VARIABLES.RESOURCEPATH + "Icons\\arrow_left.png");
+            ARROW_RIGHT = new(VARIABLES.RESOURCEPATH + "Icons\\arrow_right.png");
         }
     }
 }
