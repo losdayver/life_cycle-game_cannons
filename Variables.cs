@@ -1,4 +1,5 @@
 ﻿using SFML.Graphics;
+using SFML.Window;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,6 +51,7 @@ namespace game_cannons
         public static Texture ARROW;
         public static Texture BACKGROUND;
         public static Texture BULLET;
+        public static Texture ARROW_CURSOR;
 
         static TEXTURES()
         {
@@ -60,6 +62,7 @@ namespace game_cannons
             ARROW = new(VARIABLES.RESOURCEPATH + "Tanks&shells\\Default size\\tank_arrowFull.png");
             BACKGROUND = new(VARIABLES.RESOURCEPATH + "lvl_cosmos\\background_space_2.png");
             BULLET = new(VARIABLES.RESOURCEPATH + "Tanks&shells\\Default size\\bulletTest.png");
+            ARROW_CURSOR = new(VARIABLES.RESOURCEPATH + "resources\\Icons\\arrow-cursor.png");
         }
     }
 }

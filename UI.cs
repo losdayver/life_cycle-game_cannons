@@ -98,7 +98,7 @@ namespace game_cannons
             else if (Game.GAME_STATE == "SETTINGS")
             {
                 App.window.Clear();
-                Sprite s = new(TEXTURES.GREENTANKBODY);
+                Sprite s = new(TEXTURES.ARROW_CURSOR);
 
 
                 s.Position = new(Mouse.GetPosition().X - App.window.Position.X, Mouse.GetPosition().Y - App.window.Position.Y);
