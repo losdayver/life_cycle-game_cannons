@@ -62,7 +62,7 @@ namespace game_cannons
         public Bullet(Tank tank, float startSpeed)
         {
             x = tank.x;
-            y = tank.y - 15;
+            y = tank.y - 15; // фиксируем патрон на уровне дула
             angle = tank.turretAngle;
             xSpeed = (float)Math.Cos((double)angle * Math.PI / 180) * startSpeed;
             ySpeed = (float)Math.Sin((double)angle * Math.PI / 180) * startSpeed;
@@ -76,21 +76,21 @@ namespace game_cannons
             if (checkXInWindow)
             {
                 bool IsNotCollision = this.y < App.window.Size.Y - Game.session.scene.sceneHeights[(uint)x];
-                if (IsNotCollision)
+                if (IsNotCollision) // если еще не столкнулся с землей
                 {
-                    bool turnAlreadyPlused = false;
-                    for (int i = 0; i < 3; i++)
+                    bool turnAlreadyPlused = false; // ниже объяснение
+                    for (int i = 0; i < 3; i++)  // проверяем столкновение со всеми танками
                     {
                         bool IsTarget = x >= Game.session.tanks[i].x - 10 && x <= Game.session.tanks[i].x + 10;
                         IsTarget = IsTarget && y >= Game.session.tanks[i].y - 10 && y <= Game.session.tanks[i].y + 10;
-                        if (IsTarget && Game.session.tanks[i].status)
+                        if (IsTarget && Game.session.tanks[i].status) // если попали в еще живой танк
                         {
                             Game.session.tanks[i].hp--;
                             if (Game.session.tanks[i].hp == 0)
                             {
                                 Game.session.tanks[i].status = false;
                             }
-                            Game.session.bullet = null;
+                            Game.session.bullet = null; // удаляем патрон
                             Game.session.bulletCreated = false;
                             if (!turnAlreadyPlused)  // без этого если за один выстрел ранил 2 цели - +2 хода
                             {
@@ -104,7 +104,7 @@ namespace game_cannons
                 }
                 else
                 {
-                    Game.session.scene.Hit(x, y);
+                    Game.session.scene.Hit(x, y);  //разрушение ландшафта
                 }
             }
             else
@@ -140,7 +140,7 @@ namespace game_cannons
             this.x = x;
         }
 
-        public void Land()  // чтобы танки после каждого хода корректно стояли на ландшафте
+        public void Land()  // чтобы танки в каждом кадре корректно стояли на ландшафте
         {
             Vector2 centrePoint;
             vector = session.scene.GetDerivativeVector((uint)x, 8, out centrePoint);
@@ -155,7 +155,8 @@ namespace game_cannons
         {
             for (int i = 0; i < 3; i++)
             {
-                Game.session.tanks[i].Land();
+                Game.session.tanks[i].Land();  // в каждом кадре все танки должны корректно стоять, даже если не их ход
+                // т. к. под ними можем измениться ландшафт от выстрела (+ появление при инициализации)
             }
 
             if (KEYS.KEY_LEFT && currentSpeed > -maxSpeed)
@@ -170,6 +171,7 @@ namespace game_cannons
                     currentSpeed = 0;
             }
 
+            // не дадим выйти за пределы карты (число 15 подобрано, чтобы даже частично не выйти за карту)
             bool InWindow = x + currentSpeed * (Math.Abs(vector[1].Y / vector[0].Y)) < session.scene.xSize - 15;
             InWindow = InWindow && x + currentSpeed * (Math.Abs(vector[1].Y / vector[0].Y)) > 15;
             if (InWindow)
@@ -386,7 +388,7 @@ namespace game_cannons
 
         public void Hit(float x, float y)
         {
-            GenerateCrater((uint)x, (uint)y);
+            GenerateCrater((uint)x, (uint)y);  // создание кратера
             GenerateMap();
             Game.session.bullet = null;
             Game.session.bulletCreated = false;
@@ -395,6 +397,7 @@ namespace game_cannons
 
         public void GenerateCrater(uint x, uint y)
         {
+            // взрыв в радиусе 15 от точки падения, чем ближе к центру, тем выше ущерб
             uint damage = 5;
             for (uint i = x - 15; i <= x; i++)
             {
@@ -423,11 +426,12 @@ namespace game_cannons
     public class Session
     {
         public List<Tank> tanks = new();  // список танков
-        public int turn = 0;
-        public Tank controlledTank;
+        public int turn = 0;  // для смены хода
+        public Tank controlledTank;  // текущий управляемый танк
         public Scene scene = new(1024, 600);
         public Bullet bullet;
-        public bool bulletCreated = false;  // выпущена ли сейчас пуля (чтобы нельзя было прервать полет и запустить ее еще раз)
+        public bool bulletCreated = false;  // выпущена ли сейчас пуля (чтобы нельзя было прервать полет и
+                                            // запустить ее еще раз)
 
         public Session() 
         {
@@ -444,19 +448,20 @@ namespace game_cannons
             {
                 if (tanks[i].status)
                 {
-                    aliveCount++;
+                    aliveCount++;  // считаем сколько сейчас живых танков
                 }
             }
             if (aliveCount <= 1)
             {
-                Console.WriteLine("Game has ended!");
+                Console.WriteLine("Game has ended!");  // TODO: добавить другое решение при окончании игры
                 App.window.Close();
             }
-            while (!tanks[turn % tanks.Count].status)
+            while (!tanks[turn % tanks.Count].status) // после смерти танки не удаляются, а зануляются, поэтому
+                                                        // для зануленных танков ход скипается
             {
                 turn++;
             }
-            controlledTank = tanks[turn % tanks.Count];
+            controlledTank = tanks[turn % tanks.Count];  // переход хода по сути переход по индексу списка танков
             controlledTank.Tick();
             if (bullet != null)
             {

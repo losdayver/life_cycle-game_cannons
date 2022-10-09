@@ -42,7 +42,7 @@ namespace game_cannons
                 List<Sprite> tanksTracksSprite = new();
                 List<Sprite> tanksBodySprite = new();
                 List<Sprite> tanksTurretSprite = new();
-                List<Sprite> tanksHPSprite = new();
+                List<Sprite> tanksHPSprite = new();  // health bar
                 for (int i = 0; i < 3; i++)
                 {
                     tanksTracksSprite.Add(new(TEXTURES.TANKTRACKS));
