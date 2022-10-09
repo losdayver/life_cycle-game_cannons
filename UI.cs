@@ -21,6 +21,7 @@ namespace game_cannons
     /// </summary>
     internal static class UI
     {
+        static Menu menu =new();
         static UI()
         {
         }
@@ -42,7 +43,7 @@ namespace game_cannons
                 List<Sprite> tanksBodySprite = new();
                 List<Sprite> tanksTurretSprite = new();
                 for (int i = 0; i < 3; i++)
-                {                   
+                {
                     tanksTracksSprite.Add(new(TEXTURES.TANKTRACKS));
                     tanksBodySprite.Add(new(TEXTURES.GREENTANKBODY));
                     tanksTurretSprite.Add(new(TEXTURES.TURRET));
@@ -74,7 +75,7 @@ namespace game_cannons
                 {
                     bullet.Position = new(Game.session.bullet.x, Game.session.bullet.y);
                 }
-                
+
 
                 App.window.Draw(backGround);
                 App.window.Draw(new Sprite(Game.session.scene.map.Texture));
@@ -86,35 +87,42 @@ namespace game_cannons
                         App.window.Draw(tanksBodySprite[i]);
                         App.window.Draw(tanksTracksSprite[i]);
                     }
-                    
+
                 }
-                
+
                 if (Game.session.bullet != null)
                 {
                     App.window.Draw(bullet);
                 }
-                    
+
             }
             else if (Game.GAME_STATE == "SETTINGS")
             {
                 App.window.Clear();
-                Sprite s = new(TEXTURES.ARROW_CURSOR);
-
-
-                s.Position = new(Mouse.GetPosition().X - App.window.Position.X, Mouse.GetPosition().Y - App.window.Position.Y);
-
-                App.window.Draw(s);
-
-                if (KEYS.MOUSE_LEFT)
-                {
-                    Console.WriteLine("Left");
-                }
-                if (KEYS.MOUSE_RIGHT)
-                {
-                    Console.WriteLine("Right");
-                }
+                menu.Display();
+                
             }
-            
+
+        }
+    }
+    class Menu
+    {
+        List<Button> buttons= new();
+        public Menu()
+        { buttons.Add(new Button("arrow_left"));
+            buttons.Add(new Button("arrow_right"));
+            buttons.Add(new Button("start"));
+        }
+        public void Display() { 
+        }
+    }
+
+    class Button
+    {
+        public string name;
+        public Button (string name)
+        {
+            this.name = name;
         }
     }
 }
