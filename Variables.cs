@@ -62,7 +62,7 @@ namespace game_cannons
             ARROW = new(VARIABLES.RESOURCEPATH + "Tanks&shells\\Default size\\tank_arrowFull.png");
             BACKGROUND = new(VARIABLES.RESOURCEPATH + "lvl_cosmos\\background_space_2.png");
             BULLET = new(VARIABLES.RESOURCEPATH + "Tanks&shells\\Default size\\bulletTest.png");
-            ARROW_CURSOR = new(VARIABLES.RESOURCEPATH + "resources\\Icons\\arrow-cursor.png");
+            ARROW_CURSOR = new(VARIABLES.RESOURCEPATH + "Icons\\arrow-cursor.png");
         }
     }
 }
