@@ -90,6 +90,7 @@ namespace game_cannons
             {
                 Game.session.bullet = null;
                 Game.session.bulletCreated = false;
+                Game.session.turn++;
             }
 
             ySpeed += acceleration;   
@@ -105,13 +106,15 @@ namespace game_cannons
         float currentSpeed = 0f;
         public float turretAngle = 270f;
         float turretRotationSpeed = 2.5f;
-        public float x = 100;
-        public float y = 0;
+        public float x;
+        public float y;
         public float angle = 0f;
 
-        public Tank(Session s) 
+        public Tank(Session s, float x, float y) 
         {
             session = s;
+            this.x = x;
+            this.y = y;
         }
 
         public void Tick()
@@ -266,6 +269,7 @@ namespace game_cannons
                 map.Dispose();
             }
             map = new RenderTexture(xSize, ySize);
+            map.Clear(Color.Transparent);
 
             Texture bnwMap = GetBnTMap();
             Sprite bnwSprite = new Sprite(bnwMap);
@@ -343,16 +347,34 @@ namespace game_cannons
 
         public void Hit(float x, float y)
         {
-            //GenerateCrater((uint)x, (uint)y);
+            GenerateCrater((uint)x, (uint)y);
             GenerateMap();
-            sceneHeights[(uint)x] += 20;
             Game.session.bullet = null;
             Game.session.bulletCreated = false;
+            Game.session.turn++;
         }
 
         public void GenerateCrater(uint x, uint y)
         {
-            //for (int )
+            uint damage = 1;
+            for (uint i = x - 10; i <= x; i++)
+            {
+                if ((i > 0 && i < App.window.Size.X) && (sceneHeights[i] > 0))
+                {
+                    sceneHeights[i] -= damage;
+                    damage++;
+                }
+                
+            }
+            damage--;
+            for (uint i = x+1; i <= x + 10; i++)
+            {
+                if ((i > 0 && i < App.window.Size.X) && (sceneHeights[i] > 0))
+                {
+                    sceneHeights[i] -= damage;
+                    damage--;
+                }
+            }
         }
     }
 
@@ -361,6 +383,8 @@ namespace game_cannons
     /// </summary>
     public class Session
     {
+        public List<Tank> tanks = new();  // список танков
+        public int turn = 0;
         public Tank controlledTank;
         public Scene scene = new(1024, 600);
         public Bullet bullet;
@@ -368,12 +392,15 @@ namespace game_cannons
 
         public Session() 
         {
-            controlledTank = new(this);
+            tanks.Add(new Tank(this, 100, 0));
+            tanks.Add(new Tank(this, 500, 0));
+            tanks.Add(new Tank(this, 900, 0));
             scene.GenerateSceneHeights(128, 300);
         }
 
         public void Tick()
         {
+            controlledTank = tanks[turn % tanks.Count];
             controlledTank.Tick();
             if (bullet != null)
             {
