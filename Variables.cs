@@ -30,8 +30,9 @@ namespace game_cannons
     /// </summary>
     internal static class VARIABLES
     {
-        public static string RESOURCEPATH = Environment.CurrentDirectory;
-        public static string DATABASEPATH = Environment.CurrentDirectory;
+        public static readonly string RESOURCEPATH = Environment.CurrentDirectory;
+        public static readonly string DATABASEPATH = Environment.CurrentDirectory;
+        public static readonly string DEFAULTFONT;
 
         static VARIABLES()
         {
@@ -39,6 +40,7 @@ namespace game_cannons
             RESOURCEPATH += "\\resources\\";
             DATABASEPATH = DATABASEPATH.Substring(0, DATABASEPATH.Length - "bin\\Debug\\net6.0".Length);
             DATABASEPATH += "\\databases\\";
+            DEFAULTFONT = RESOURCEPATH + "ArialRegular.ttf";
         }
     }
 
@@ -47,19 +49,16 @@ namespace game_cannons
     /// </summary>
     internal static class TEXTURES
     {
-        public static Texture GREENTANKBODY;
-        public static Texture TANKTRACKS;
-        public static Texture TURRET;
-        public static Texture LANDTEXTURE;
-        public static Texture ARROW;
-        public static Texture BACKGROUND;
-        public static Texture BULLET;
-        public static Texture ARROW_CURSOR;
-        public static Texture ARROW_LEFT;
-        public static Texture ARROW_RIGHT;
-        public static Texture HP3;
-        public static Texture HP2;
-        public static Texture HP1;
+        public static readonly Texture GREENTANKBODY;
+        public static readonly Texture TANKTRACKS;
+        public static readonly Texture TURRET;
+        public static readonly Texture LANDTEXTURE;
+        public static readonly Texture ARROW;
+        public static readonly Texture BACKGROUND;
+        public static readonly Texture BULLET;
+        public static readonly Texture ARROW_CURSOR;
+        public static readonly Texture ARROW_LEFT;
+        public static readonly Texture ARROW_RIGHT;
 
         static TEXTURES()
         {
@@ -73,10 +72,6 @@ namespace game_cannons
             ARROW_CURSOR = new(VARIABLES.RESOURCEPATH + "Icons\\arrow-cursor.png");
             ARROW_LEFT = new(VARIABLES.RESOURCEPATH + "Icons\\arrow_left.png");
             ARROW_RIGHT = new(VARIABLES.RESOURCEPATH + "Icons\\arrow_right.png");
-            HP3 = new(VARIABLES.RESOURCEPATH + "Tanks&shells\\Default size\\hp3.png");
-            HP2 = new(VARIABLES.RESOURCEPATH + "Tanks&shells\\Default size\\hp2.png");
-            HP1 = new(VARIABLES.RESOURCEPATH + "Tanks&shells\\Default size\\hp1.png");
-
         }
     }
 }

@@ -52,6 +52,8 @@ namespace game_cannons
     /// </summary>
     static class SessionDrawer
     {
+        static Font player_font = new Font(VARIABLES.DEFAULTFONT);
+
         public static void Display()
         {
             Sprite backGroundSprite = new(TEXTURES.BACKGROUND);
@@ -79,8 +81,8 @@ namespace game_cannons
                 tanksBodySprite.Rotation = t.angle;
 
                 tanksTurretSprite.Position = new(
-                    tanksBodySprite.Position.X,
-                    tanksBodySprite.Position.Y - tanksBodySprite.Origin.Y / 4);
+                    t.x,
+                    t.y - tanksBodySprite.Origin.Y / 4);
                 tanksTurretSprite.Rotation = t.turretAngle;
                 tanksTurretSprite.Scale /= 2f;
                 tanksTurretSprite.Origin = new Vector2f(0, TEXTURES.TURRET.Size.Y * 0.5f);
@@ -117,8 +119,12 @@ namespace game_cannons
                     App.window.Draw(fuel_box);
                 }
 
-                
+                Text player_text = new(t.playerName, player_font);
+                player_text.CharacterSize = 12;
+                player_text.FillColor = Color.White;
+                player_text.Position = new(hp_box.Position.X, hp_box.Position.Y - 20);
 
+                App.window.Draw(player_text);
             }
 
             if (Game.session.bullet != null)

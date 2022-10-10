@@ -21,10 +21,17 @@ namespace game_cannons
     /// </summary>
     internal static class Game
     {
+        public enum GameState
+        {
+            MENU,
+            SETTINGS,
+            GAME_SESSION
+        }
+
         /// <summary>
         /// Допустимые значения переменной: MENU, SETTINGS, GAME_SESSION
         /// </summary>
-        public static string GAME_STATE = "GAME_SESSION";
+        public static GameState GAME_STATE = GameState.GAME_SESSION;
         public static Session session = new();
 
         static Game()
@@ -36,15 +43,15 @@ namespace game_cannons
         /// </summary>
         public static void Tick()
         {
-            if (GAME_STATE == "GAME_SESSION")
+            if (GAME_STATE == GameState.GAME_SESSION)
             {
                 session.Tick();
             }
-            else if (GAME_STATE == "MENU")
+            else if (GAME_STATE == GameState.MENU)
             {
                 
             }
-            else if (GAME_STATE == "SETTINGS")
+            else if (GAME_STATE == GameState.SETTINGS)
             {
                 // Здесь будет код для настроек
             }
@@ -480,8 +487,8 @@ namespace game_cannons
         {
             scene = new(1024, 600, this);
             tanks.Add(new Tank(this, 100, "player1"));
-            tanks.Add(new Tank(this, 500, "player2"));
-            tanks.Add(new Tank(this, 900, "player3"));
+            //tanks.Add(new Tank(this, 500, "player2"));
+            tanks.Add(new Tank(this, scene.xSize - 100, "player3"));
             scene.GenerateSceneHeights(128, 300);
         }
 
