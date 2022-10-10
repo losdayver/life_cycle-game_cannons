@@ -32,6 +32,7 @@ namespace game_cannons
     {
         public static readonly string RESOURCEPATH = Environment.CurrentDirectory;
         public static readonly string DATABASEPATH = Environment.CurrentDirectory;
+        public static readonly string SOUNDSPATH;
         public static readonly string DEFAULTFONT;
 
         static VARIABLES()
@@ -41,6 +42,8 @@ namespace game_cannons
             DATABASEPATH = DATABASEPATH.Substring(0, DATABASEPATH.Length - "bin\\Debug\\net6.0".Length);
             DATABASEPATH += "\\databases\\";
             DEFAULTFONT = RESOURCEPATH + "ArialRegular.ttf";
+            SOUNDSPATH = RESOURCEPATH + "Sounds\\";
+
         }
     }
 
