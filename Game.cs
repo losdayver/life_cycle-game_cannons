@@ -485,7 +485,7 @@ namespace game_cannons
 
         public Session() 
         {
-            scene = new(1024, 600, this);
+            scene = new(App.width, App.height, this);
             tanks.Add(new Tank(this, 100, "Танчик 1"));
             //tanks.Add(new Tank(this, 500, "player2"));
             tanks.Add(new Tank(this, scene.xSize - 100, "Танчик 2"));

@@ -14,7 +14,9 @@ namespace game_cannons
     /// </summary>
     static class App
     {
-        public static RenderWindow window = new RenderWindow(new VideoMode(1024, 600), "Игра Cannons от команды Life-Cycle");
+        public const int width = 1024;
+        public const int height = 600;
+        public static RenderWindow window = new RenderWindow(new VideoMode(width, height), "Игра Cannons от команды Life-Cycle");
 
         static App()
         {
