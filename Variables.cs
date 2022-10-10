@@ -31,11 +31,14 @@ namespace game_cannons
     internal static class VARIABLES
     {
         public static string RESOURCEPATH = Environment.CurrentDirectory;
+        public static string DATABASEPATH = Environment.CurrentDirectory;
 
         static VARIABLES()
         {
             RESOURCEPATH = RESOURCEPATH.Substring(0, RESOURCEPATH.Length - "bin\\Debug\\net6.0".Length);
             RESOURCEPATH += "\\resources\\";
+            DATABASEPATH = DATABASEPATH.Substring(0, DATABASEPATH.Length - "bin\\Debug\\net6.0".Length);
+            DATABASEPATH += "\\databases\\";
         }
     }
 

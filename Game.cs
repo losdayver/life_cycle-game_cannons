@@ -121,7 +121,7 @@ namespace game_cannons
     public class Tank
     {
         Session session;
-        string playerName = "";
+        public string playerName = "";
         float maxSpeed = 2f;
         float acceleration = 0.2f;
         float currentSpeed = 0f;
@@ -134,10 +134,11 @@ namespace game_cannons
         public int hp = 3; // кол-во допустимых попаданий
         Vector2[] vector;
 
-        public Tank(Session s, float x) 
+        public Tank(Session s, float x, string name) 
         {
             session = s;
             this.x = x;
+            this.playerName = name;
         }
 
         public void Land()  // чтобы танки в каждом кадре корректно стояли на ландшафте
@@ -449,9 +450,9 @@ namespace game_cannons
 
         public Session() 
         {
-            tanks.Add(new Tank(this, 100));
-            tanks.Add(new Tank(this, 500));
-            tanks.Add(new Tank(this, 900));
+            tanks.Add(new Tank(this, 100, "player1"));
+            tanks.Add(new Tank(this, 500, "player2"));
+            tanks.Add(new Tank(this, 900, "player3"));
             scene.GenerateSceneHeights(128, 300);
         }
 
@@ -467,7 +468,7 @@ namespace game_cannons
             }
             if (aliveCount <= 1)
             {
-                Console.WriteLine("Game has ended!");  // TODO: добавить другое решение при окончании игры
+                DB.SaveResult("file");  // TODO: добавить другое решение при окончании игры
                 App.window.Close();
             }
             while (!tanks[turn % tanks.Count].status) // после смерти танки не удаляются, а зануляются, поэтому
