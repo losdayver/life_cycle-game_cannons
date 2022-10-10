@@ -192,10 +192,22 @@ namespace game_cannons
 
             if (KEYS.KEY_SPACE && !Game.session.bulletCreated)
             {
-                Bullet bullet = new(this, 10);
+                Game.session.spaceWasPressed = true;
+                Game.session.startSpeed += 0.5f;
+            }
+
+            if (!KEYS.KEY_SPACE && Game.session.spaceWasPressed)
+            {
+                if (Game.session.startSpeed > 20) Game.session.startSpeed = 20;
+                //Console.WriteLine(Game.session.startSpeed);  проверка скорости
+                Bullet bullet = new(this, Game.session.startSpeed);
                 session.bullet = bullet;
                 Game.session.bulletCreated = true;
+                Game.session.startSpeed = 0;
+                Game.session.spaceWasPressed = false;
             }
+
+            
         }
     }
 
@@ -432,6 +444,8 @@ namespace game_cannons
         public Bullet bullet;
         public bool bulletCreated = false;  // выпущена ли сейчас пуля (чтобы нельзя было прервать полет и
                                             // запустить ее еще раз)
+        public float startSpeed = 0;
+        public bool spaceWasPressed = false;
 
         public Session() 
         {
