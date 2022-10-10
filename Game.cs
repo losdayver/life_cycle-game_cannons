@@ -12,6 +12,7 @@ using System.Dynamic;
 using static System.Formats.Asn1.AsnWriter;
 using System.Diagnostics.Metrics;
 using System.Runtime.InteropServices;
+using SFML.Audio;
 
 namespace game_cannons
 {
@@ -31,11 +32,15 @@ namespace game_cannons
         /// <summary>
         /// Допустимые значения переменной: MENU, SETTINGS, GAME_SESSION
         /// </summary>
-        public static GameState GAME_STATE = GameState.MENU;
+        public static GameState GAME_STATE = GameState.GAME_SESSION;
         public static Session session = new();
+
+        static Music music = new (VARIABLES.SOUNDSPATH + "main_theme.ogg");
 
         static Game()
         {
+            music.Loop = true;
+            music.Play();
         }
 
         /// <summary>
