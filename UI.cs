@@ -55,7 +55,6 @@ namespace game_cannons
         public static void Display()
         {
             Sprite backGroundSprite = new(TEXTURES.BACKGROUND);
-            Sprite bulletSprite = new(TEXTURES.BULLET);
             backGroundSprite.Scale /= 2;
 
             App.window.Draw(backGroundSprite);
@@ -93,8 +92,8 @@ namespace game_cannons
                 App.window.Draw(tanksBodySprite);
                 App.window.Draw(tanksTracksSprite);
 
-                RectangleShape hp_box = new(new Vector2f(35f, 6f));
-                hp_box.Position = new(t.x - hp_box.Size.X / 2, t.y - 40);
+                RectangleShape hp_box = new(new Vector2f(25f, 5f));
+                hp_box.Position = new(t.x - hp_box.Size.X / 2, t.y - 50);
                 hp_box.FillColor = Color.Red;
 
                 RectangleShape hp_box1 = new(hp_box);
@@ -110,6 +109,12 @@ namespace game_cannons
                     power_box.Size = new(hp_box.Size.X * (Game.session.bulletStartSpeed / Game.session.bulletMaxSpeed), hp_box.Size.Y/2);
                     power_box.FillColor = Color.Blue;
                     App.window.Draw(power_box);
+
+                    RectangleShape fuel_box = new(hp_box);
+                    fuel_box.Size = new(hp_box.Size.X * ((float)Game.session.fuel / Game.session.startFuel), hp_box.Size.Y / 2);
+                    fuel_box.FillColor = Color.Yellow;
+                    fuel_box.Position = new(hp_box.Position.X, hp_box.Position.Y + 8);
+                    App.window.Draw(fuel_box);
                 }
 
                 
@@ -118,11 +123,12 @@ namespace game_cannons
 
             if (Game.session.bullet != null)
             {
+                Sprite bulletSprite = new(TEXTURES.BULLET);
+                bulletSprite.Origin = new(0, TEXTURES.BULLET.Size.Y / 2);
                 bulletSprite.Position = new(Game.session.bullet.x, Game.session.bullet.y);
+                bulletSprite.Rotation = Game.session.bullet.angle;
                 App.window.Draw(bulletSprite);
             }
-
-
         }
     }
 

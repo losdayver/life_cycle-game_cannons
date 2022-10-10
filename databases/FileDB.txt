@@ -1,3 +1,3 @@
-﻿player3 			victory
-no winner			draw
-player2 			victory
+﻿player1 ; victory ;	10.10.2022 16:24:13
+player2 ; victory ; 10.10.2022 16:25:11
+player3 ; victory ; 10.10.2022 16:26:32

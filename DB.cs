@@ -45,7 +45,7 @@ namespace game_cannons
                     result = "none";
                 }
 
-                fstream.WriteLine(tanks + "\t\t\t" + result);
+                fstream.WriteLine(tanks + "; " + result + " ; " + DateTime.Now.ToString());
 
             }
         }

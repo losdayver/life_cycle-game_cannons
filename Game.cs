@@ -63,7 +63,7 @@ namespace game_cannons
         float startSpeed = 10;
         float xSpeed;
         float ySpeed;
-        float angle;
+        public float angle;
 
         public Bullet(Tank tank, float startSpeed, Session session)
         {
@@ -80,6 +80,14 @@ namespace game_cannons
 
         public void Tick()
         {
+            ySpeed += acceleration;
+            angle = (float)(Math.Atan((double)ySpeed / xSpeed) * 180 / Math.PI);
+
+            if (xSpeed < 0)
+            {
+                angle += 180;
+            }
+
             bool checkXInWindow = x > 0 && x < App.window.Size.X;
             if (checkXInWindow)
             {
@@ -120,9 +128,8 @@ namespace game_cannons
                 Game.session.bullet = null;
                 Game.session.bulletCreated = false;
                 Game.session.turn++;
+                Game.session.fuel = Game.session.startFuel;
             }
-
-            ySpeed += acceleration;   
         }
     }
 
@@ -175,10 +182,16 @@ namespace game_cannons
 
         public void Tick()
         {
-            if (KEYS.KEY_LEFT && currentSpeed > -maxSpeed)
+            if (KEYS.KEY_LEFT && currentSpeed > -maxSpeed && session.fuel > 0)
+            { 
                 currentSpeed -= acceleration;
-            else if (KEYS.KEY_RIGHT && currentSpeed < maxSpeed)
+                session.fuel -= 1;
+            }
+            else if (KEYS.KEY_RIGHT && currentSpeed < maxSpeed && session.fuel > 0)
+            {
                 currentSpeed += acceleration;
+                session.fuel -= 1;
+            }
             else
             {
                 currentSpeed += -Math.Sign(currentSpeed) * acceleration;
@@ -419,6 +432,7 @@ namespace game_cannons
             session.bullet = null;
             session.bulletCreated = false;
             session.turn++;
+            session.fuel = session.startFuel;
         }
 
         public void GenerateCrater(uint x0)
@@ -456,6 +470,9 @@ namespace game_cannons
         public float bulletStartSpeed = 0;
         public float bulletMaxSpeed = 18;
         public float bulletPowerIncrement = 0.5f;
+
+        public int startFuel = 40;
+        public int fuel = 40;
 
         public bool spaceWasPressed = false;
 
