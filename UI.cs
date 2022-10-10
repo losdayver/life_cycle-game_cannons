@@ -166,8 +166,6 @@ namespace game_cannons
             App.window.Draw(playButtonSprite);
             App.window.Draw(statisticsButtonSprite);
             App.window.Draw(exitButtonSprite);
-
-            
             
         }
     }
