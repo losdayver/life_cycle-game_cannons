@@ -31,7 +31,7 @@ namespace game_cannons
         /// <summary>
         /// Допустимые значения переменной: MENU, SETTINGS, GAME_SESSION
         /// </summary>
-        public static GameState GAME_STATE = GameState.GAME_SESSION;
+        public static GameState GAME_STATE = GameState.MENU;
         public static Session session = new();
 
         static Game()
