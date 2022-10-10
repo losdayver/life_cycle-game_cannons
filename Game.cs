@@ -21,7 +21,9 @@ namespace game_cannons
     /// </summary>
     internal static class Game
     {
-        // Допустимые значения переменной: MENU, SETTINGS, GAME_SESSION
+        /// <summary>
+        /// Допустимые значения переменной: MENU, SETTINGS, GAME_SESSION
+        /// </summary>
         public static string GAME_STATE = "GAME_SESSION";
         public static Session session = new();
 
@@ -79,16 +81,16 @@ namespace game_cannons
                 if (IsNotCollision) // если еще не столкнулся с землей
                 {
                     bool turnAlreadyPlused = false; // ниже объяснение
-                    for (int i = 0; i < 3; i++)  // проверяем столкновение со всеми танками
+                    for (int i = 0; i < Game.session.tanks.Count; i++)  // проверяем столкновение со всеми танками
                     {
                         bool IsTarget = x >= Game.session.tanks[i].x - 10 && x <= Game.session.tanks[i].x + 10;
-                        IsTarget = IsTarget && y >= Game.session.tanks[i].y - 10 && y <= Game.session.tanks[i].y + 10;
-                        if (IsTarget && Game.session.tanks[i].status) // если попали в еще живой танк
+                        IsTarget = IsTarget && y >= Game.session.tanks[i].y - 12 && y <= Game.session.tanks[i].y + 10;
+                        if (IsTarget && Game.session.tanks[i].isAlive) // если попали в еще живой танк
                         {
                             Game.session.tanks[i].hp--;
                             if (Game.session.tanks[i].hp == 0)
                             {
-                                Game.session.tanks[i].status = false;
+                                Game.session.tanks[i].isAlive = false;
                             }
                             Game.session.bullet = null; // удаляем патрон
                             Game.session.bulletCreated = false;
@@ -104,7 +106,7 @@ namespace game_cannons
                 }
                 else
                 {
-                    Game.session.scene.Hit(x, y);  //разрушение ландшафта
+                    Game.session.scene.Hit(x);  //разрушение ландшафта
                 }
             }
             else
@@ -118,11 +120,14 @@ namespace game_cannons
         }
     }
 
+    /// <summary>
+    /// Данный класс описывает танк на игровом поле
+    /// </summary>
     public class Tank
     {
         Session session;
         public string playerName = "";
-        float maxSpeed = 2f;
+        float maxSpeed = 1f;
         float acceleration = 0.2f;
         float currentSpeed = 0f;
         public float turretAngle = 270f;
@@ -130,8 +135,15 @@ namespace game_cannons
         public float x;
         public float y = 0;
         public float angle = 0f;
-        public bool status = true; // true - жив, false - уничтожен
-        public int hp = 3; // кол-во допустимых попаданий
+        /// <summary>
+        /// true - жив, false - уничтожен
+        /// </summary>
+        public bool isAlive = true;
+        /// <summary>
+        /// Жизни танка
+        /// </summary>
+        public int max_hp = 4;
+        public int hp = 4;
         Vector2[] vector;
 
         public Tank(Session s, float x, string name) 
@@ -141,7 +153,10 @@ namespace game_cannons
             this.playerName = name;
         }
 
-        public void Land()  // чтобы танки в каждом кадре корректно стояли на ландшафте
+        /// <summary>
+        /// чтобы танки в каждом кадре корректно стояли на ландшафте
+        /// </summary>
+        public void Land()
         {
             Vector2 centrePoint;
             vector = session.scene.GetDerivativeVector((uint)x, 8, out centrePoint);
@@ -154,12 +169,6 @@ namespace game_cannons
 
         public void Tick()
         {
-            for (int i = 0; i < 3; i++)
-            {
-                Game.session.tanks[i].Land();  // в каждом кадре все танки должны корректно стоять, даже если не их ход
-                // т. к. под ними можем измениться ландшафт от выстрела (+ появление при инициализации)
-            }
-
             if (KEYS.KEY_LEFT && currentSpeed > -maxSpeed)
                 currentSpeed -= acceleration;
             else if (KEYS.KEY_RIGHT && currentSpeed < maxSpeed)
@@ -220,7 +229,20 @@ namespace game_cannons
         /// <summary>
         /// Размер сцены по горизонтали в пикселях -- значение должно быть 2^n
         /// </summary>
-        public uint xSize;
+        uint _xSize = 0;
+        public uint xSize 
+        { 
+            get { return _xSize; }
+            set 
+            {
+                if ((Math.Log(_xSize, 2)) % 1 != 0)
+                    throw new Exception("xSize должно иметь вид 2^n");
+                else
+                {
+                    _xSize = value;
+                }
+            } 
+        }
         public uint ySize;
         
         /// <summary>
@@ -235,11 +257,10 @@ namespace game_cannons
 
         public Scene(uint xSize, uint ySize)
         {
-            if ((Decimal)(Math.Log(xSize, 2)) % 1 != 0)
-                throw new Exception("xSize должно иметь вид 2^n");
-
-            this.xSize = xSize;
+            this._xSize = xSize;
             this.ySize = ySize;
+
+            map = new RenderTexture(xSize, ySize);
 
             sceneHeights = new uint[xSize];
         }
@@ -254,12 +275,6 @@ namespace game_cannons
         {
             if (depth > ySize || maxHeight > ySize)
                 throw new Exception("Неправильно заданы параметры GenerateScene");
-
-            // Эта проверка необходима для предотвращаения утечек памяти
-            if (map != null) 
-            {
-                map.Dispose();
-            }
 
             Random rand = new();
             int[] heights = new int[depth + 1];
@@ -318,22 +333,17 @@ namespace game_cannons
         /// </summary>
         public void GenerateMap()
         {
-            if (map != null)
-            {
-                map.Dispose();
-            }
-            map = new RenderTexture(xSize, ySize);
             map.Clear(Color.Transparent);
 
-            Texture bnwMap = GetBnTMap();
-            Sprite bnwSprite = new Sprite(bnwMap);
+            Texture bnwMap = GetTnW();
+            Sprite tnWSprite = new Sprite(bnwMap);
             Sprite landSprite = new Sprite(TEXTURES.LANDTEXTURE);
 
-            map.Draw(bnwSprite);
+            map.Draw(tnWSprite);
             map.Draw(landSprite, new RenderStates(BlendMode.Multiply));
 
             bnwMap.Dispose();
-            bnwSprite.Dispose();
+            tnWSprite.Dispose();
             landSprite.Dispose();
         }
 
@@ -341,7 +351,7 @@ namespace game_cannons
         /// Генерирует прозрачно-белую текстуру на основе sceneHeights
         /// </summary>
         /// <returns> Возвращает данную текстуру </returns>
-        public Texture GetBnTMap()
+        private Texture GetTnW()
         {
             Image img = new Image(xSize, ySize, Color.Transparent);
 
@@ -399,42 +409,37 @@ namespace game_cannons
             return new Vector2[] { new(leftX, ySize - leftMax), new(rightX, ySize - rightMax) };
         }
 
-        public void Hit(float x, float y)
+        public void Hit(float x)
         {
-            GenerateCrater((uint)x, (uint)y);  // создание кратера
+            GenerateCrater((uint)x);  // создание кратера
             GenerateMap();
             Game.session.bullet = null;
             Game.session.bulletCreated = false;
             Game.session.turn++;
         }
 
-        public void GenerateCrater(uint x, uint y)
+        public void GenerateCrater(uint x0)
         {
             // взрыв в радиусе 15 от точки падения, чем ближе к центру, тем выше ущерб
-            uint damage = 5;
-            for (uint i = x - 15; i <= x; i++)
+            int r = 20;
+            for (int x = (int)x0 - r; x <= (int)x0 + r; x++)
             {
-                if ((i > 0 && i < App.window.Size.X) && (sceneHeights[i] > 0))
+                if ((x >= 0 && x < xSize) && (sceneHeights[x] > 0))
                 {
-                    sceneHeights[i] -= damage;
-                    damage++;
+                    uint damage = (uint)Math.Sqrt(Math.Pow(r, 2) - Math.Pow(x - x0, 2));
+                    if (damage < sceneHeights[x]) 
+                        sceneHeights[x] -= damage;
+                    else
+                        sceneHeights[x] = 0;
                 }
                 
-            }
-            damage--;
-            for (uint i = x+1; i <= x + 15; i++)
-            {
-                if ((i > 0 && i < App.window.Size.X) && (sceneHeights[i] > 0))
-                {
-                    sceneHeights[i] -= damage;
-                    damage--;
-                }
             }
         }
     }
 
     /// <summary>
-    /// Данный класс описывает игровую сессию -- сцену, танки, и объекты на сцене, а также другие параметры, связанные с игровым процессом
+    /// Данный класс описывает игровую сессию -- сцену, танки, и объекты на сцене, 
+    /// а также другие параметры, связанные с игровым процессом
     /// </summary>
     public class Session
     {
@@ -459,31 +464,41 @@ namespace game_cannons
         public void Tick()
         {
             int aliveCount = 0;
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < tanks.Count; i++)
             {
-                if (tanks[i].status)
+                // в каждом кадре все танки должны корректно стоять, даже если не их ход
+                // т. к. под ними можем измениться ландшафт от выстрела (+ появление при инициализации)
+                if (tanks[i].isAlive)
                 {
-                    aliveCount++;  // считаем сколько сейчас живых танков
+                    Game.session.tanks[i].Land();
+                    aliveCount++;
                 }
+
             }
             if (aliveCount <= 1)
             {
                 DB.SaveResult("file");  // TODO: добавить другое решение при окончании игры
                 App.window.Close();
             }
-            while (!tanks[turn % tanks.Count].status) // после смерти танки не удаляются, а зануляются, поэтому
-                                                        // для зануленных танков ход скипается
+
+            // после смерти танки не удаляются, а зануляются, поэтому
+            // для зануленных танков ход пропускается
+            while (!tanks[turn % tanks.Count].isAlive) 
             {
                 turn++;
             }
-            controlledTank = tanks[turn % tanks.Count];  // переход хода по сути переход по индексу списка танков
+
+            // переход хода
+            controlledTank = tanks[turn % tanks.Count];
+
+            // вычисления для хода текущего танка
             controlledTank.Tick();
+
+            // если пуля не null -- высчитывать ее траекторию и поведение
             if (bullet != null)
             {
                 bullet.Tick();
             }
         }
-    }
-
-    
+    }    
 }

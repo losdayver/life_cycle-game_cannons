@@ -39,16 +39,20 @@ namespace game_cannons
                 Sprite bullet = new(TEXTURES.BULLET);
                 backGround.Scale /= 2;
 
+                App.window.Draw(backGround);
+                App.window.Draw(new Sprite(Game.session.scene.map.Texture));
+
                 List<Sprite> tanksTracksSprite = new();
                 List<Sprite> tanksBodySprite = new();
                 List<Sprite> tanksTurretSprite = new();
                 List<Sprite> tanksHPSprite = new();  // health bar
-                for (int i = 0; i < 3; i++)
+
+                for (int i = 0; i < Game.session.tanks.Count; i++)
                 {
+                    
                     tanksTracksSprite.Add(new(TEXTURES.TANKTRACKS));
                     tanksBodySprite.Add(new(TEXTURES.GREENTANKBODY));
                     tanksTurretSprite.Add(new(TEXTURES.TURRET));
-
 
                     tanksTracksSprite[i].Scale /= 3;
                     tanksTracksSprite[i].Origin = new Vector2f(TEXTURES.TANKTRACKS.Size.X / 2, TEXTURES.TANKTRACKS.Size.Y * (1 - 2 / 3));
@@ -67,28 +71,36 @@ namespace game_cannons
                     tanksTurretSprite[i].Scale /= 2f;
                     tanksTurretSprite[i].Origin = new Vector2f(0, TEXTURES.TURRET.Size.Y * 0.5f);
 
-
                     if (Game.session.tanks[i].turretAngle < 270)
                         tanksBodySprite[i].Scale = new(-tanksBodySprite[i].Scale.X, tanksBodySprite[i].Scale.Y);
 
-                    
-                    
-                    if (Game.session.tanks[i].hp == 3)
-                    {
-                        tanksHPSprite.Add(new(TEXTURES.HP3));
-                    }
-                    else if (Game.session.tanks[i].hp == 2)
-                    {
-                        tanksHPSprite.Add(new(TEXTURES.HP2));
-                    }
-                    else
-                    {
-                        tanksHPSprite.Add(new(TEXTURES.HP1));
-                    }
+                    RectangleShape hp_box = new(new Vector2f(40f, 15f));
+                    hp_box.Position = new(Game.session.tanks[i].x - hp_box.Size.X / 2, Game.session.tanks[i].y - 40);
+                    hp_box.FillColor = Color.Red;
 
-                    tanksHPSprite[i].Position = new(Game.session.tanks[i].x - 22, 
-                        tanksTurretSprite[i].Position.Y - 20);
-                    
+                    RectangleShape hp_box1 = new(hp_box);
+                    hp_box1.Size = new(hp_box.Size.X * ((float)Game.session.tanks[i].hp / Game.session.tanks[i].max_hp), hp_box.Size.Y);
+                    hp_box1.FillColor = Color.Green;
+
+                    App.window.Draw(hp_box);
+                    App.window.Draw(hp_box1);
+
+                    //if (Game.session.tanks[i].hp == 3)
+                    //{
+                    //    tanksHPSprite.Add(new(TEXTURES.HP3));
+                    //}
+                    //else if (Game.session.tanks[i].hp == 2)
+                    //{
+                    //    tanksHPSprite.Add(new(TEXTURES.HP2));
+                    //}
+                    //else
+                    //{
+                    //    tanksHPSprite.Add(new(TEXTURES.HP1));
+                    //}
+
+                    //tanksHPSprite[i].Position = new(Game.session.tanks[i].x - 22, 
+                    //    tanksTurretSprite[i].Position.Y - 20);
+
                 }
 
                 if (Game.session.bullet != null)
@@ -96,17 +108,14 @@ namespace game_cannons
                     bullet.Position = new(Game.session.bullet.x, Game.session.bullet.y);
                 }
 
-
-                App.window.Draw(backGround);
-                App.window.Draw(new Sprite(Game.session.scene.map.Texture));
                 for (int i = 0; i < 3; i++)
                 {
-                    if (Game.session.tanks[i].status)
+                    if (Game.session.tanks[i].isAlive)
                     {
                         App.window.Draw(tanksTurretSprite[i]);
                         App.window.Draw(tanksBodySprite[i]);
                         App.window.Draw(tanksTracksSprite[i]);
-                        App.window.Draw(tanksHPSprite[i]);
+                        //App.window.Draw(tanksHPSprite[i]);
                     }
 
                 }

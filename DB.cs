@@ -24,7 +24,7 @@ namespace game_cannons
                 string tanks = "";
                 for (int i = 0; i < Game.session.tanks.Count; i++)
                 {
-                    if (Game.session.tanks[i].status)
+                    if (Game.session.tanks[i].isAlive)
                     {
                         aliveTanks.Add(Game.session.tanks[i].playerName);
                         tanks += Game.session.tanks[i].playerName + " ";
