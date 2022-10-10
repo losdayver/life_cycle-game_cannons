@@ -31,14 +31,14 @@ namespace game_cannons
         /// </summary>
         public static void Draw()
         {
-            if (Game.GAME_STATE == "GAME_SESSION")
+            if (Game.GAME_STATE == Game.GameState.GAME_SESSION)
             {
                 App.window.Clear();
 
                 SessionDrawer.Display();
 
             }
-            else if (Game.GAME_STATE == "SETTINGS")
+            else if (Game.GAME_STATE == Game.GameState.MENU)
             {
                 App.window.Clear();
                 menu.Display();
