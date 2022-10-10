@@ -14,8 +14,7 @@ namespace game_cannons
     /// </summary>
     static class App
     {
-        // лучше размеры окна хранить в переменных
-        public static RenderWindow window = new SFML.Graphics.RenderWindow(new VideoMode(1024, 600), "Тестовое окно");
+        public static RenderWindow window = new RenderWindow(new VideoMode(1024, 600), "Тестовое окно");
 
         static App()
         {
@@ -77,6 +76,9 @@ namespace game_cannons
             }
         }
 
+        /// <summary>
+        /// Регистрация отпускания клавиш. В результате выполнения изменятются значения переменных в KEYS
+        /// </summary>
         private static void KeyReleased(object sender, KeyEventArgs e)
         {
             var window = (Window)sender;
@@ -93,6 +95,9 @@ namespace game_cannons
             }
         }
 
+        /// <summary>
+        /// Регистрация нажатия клавиш мыши. В результате выполнения изменятются значения переменных в KEYS
+        /// </summary>
         private static void MousePressed(object sender, MouseButtonEventArgs e)
         {
             var window = (Window)sender;
@@ -106,6 +111,9 @@ namespace game_cannons
             }
         }
 
+        /// <summary>
+        /// Регистрация отпускания клавиш мыши. В результате выполнения изменятются значения переменных в KEYS
+        /// </summary>
         private static void MouseReleased(object sender, MouseButtonEventArgs e)
         {
             var window = (Window)sender;

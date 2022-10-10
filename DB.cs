@@ -5,18 +5,41 @@ namespace game_cannons
 {
     public static class DB
     {
-        public static void SaveResult(string database)
+        /// <summary>
+        /// Список допустимых целей для сохренения игры
+        /// </summary>
+        public enum SaveTarget
         {
-            if (database == "file")
+            FILE,
+            DB
+        }
+
+        /// <summary>
+        /// Сохранение результатов игры в соответствующее расположение target
+        /// </summary>
+        /// <param name="target"> вид сохранения </param>
+        public static void SaveResult(SaveTarget target, out bool success)
+        {
+            if (target == SaveTarget.FILE)
             {
-                SaveToFile();
+                success = SaveToFile();
+            }
+            else
+            {
+                success = false;
             }
         }
 
-        public static void SaveToFile()
+        /// <summary>
+        /// Операция сохранения в файл
+        /// </summary>
+        private static bool SaveToFile()
         {
             string path = VARIABLES.DATABASEPATH + "FileDB.txt";
             FileInfo file = new(path);
+
+            if (!file.Exists) { return false; }
+
             using (StreamWriter fstream = file.AppendText())
             {
                 List<string> aliveTanks = new();
@@ -47,6 +70,7 @@ namespace game_cannons
 
                 fstream.WriteLine(tanks + "; " + result + " ; " + DateTime.Now.ToString());
 
+                return true;
             }
         }
     }

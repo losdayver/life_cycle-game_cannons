@@ -508,7 +508,18 @@ namespace game_cannons
             }
             if (aliveCount <= 1)
             {
-                DB.SaveResult("file");  // TODO: добавить другое решение при окончании игры
+                bool success;
+                DB.SaveResult(DB.SaveTarget.FILE, out success);
+
+                if (success)
+                {
+                    Console.WriteLine("Результаты текущей партии успешно сохранены!");
+                }
+                else 
+                {
+                    Console.WriteLine("Не удалось сохранить результат текущей партии.");
+                }
+
                 App.window.Close();
             }
 
