@@ -38,10 +38,6 @@ namespace game_cannons
             window.MouseButtonReleased += MouseReleased;
             window.Closed += OnClose;
             //SoundBuffer buffer = new SoundBuffer("C:\\Users\\timot\\Desktop\\main_theme.wav");
-            Music music = new(VARIABLES.SOUNDSPATH + "main_theme.ogg");
-            music.Play();
-
-            
 
             while (window.IsOpen)
             {
@@ -58,7 +54,6 @@ namespace game_cannons
                 // Обновление экрана
                 window.Display();
             }
-            music.Dispose();
         }
 
         /// <summary>

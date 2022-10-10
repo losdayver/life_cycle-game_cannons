@@ -34,7 +34,6 @@ namespace game_cannons
             if (Game.GAME_STATE == Game.GameState.GAME_SESSION)
             {
                 App.window.Clear();
-
                 SessionDrawer.Display();
 
             }
@@ -142,11 +141,32 @@ namespace game_cannons
     {
         List<Button> buttons= new();
         public Menu()
-        { buttons.Add(new Button("arrow_left"));
-            buttons.Add(new Button("arrow_right"));
-            buttons.Add(new Button("start"));
+        { 
+            /*
+            buttons.Add(new Button("play_button"));
+            buttons.Add(new Button("statistics_button"));
+            buttons.Add(new Button("exit_button"));
+            */
         }
-        public void Display() { 
+        public void Display() {
+            Sprite menubackGroundSprite = new(TEXTURES.MENU_BACKGROUND);
+            Sprite playButtonSprite = new(TEXTURES.PLAY_BUTTON);
+            Sprite statisticsButtonSprite = new(TEXTURES.STATISTICS_BUTTON);
+            Sprite exitButtonSprite = new(TEXTURES.EXIT_BUTTON);
+
+            playButtonSprite.Scale /= 2;
+            statisticsButtonSprite.Scale /= 2;
+            exitButtonSprite.Scale /= 2;
+
+            playButtonSprite.Position = new(350, 75);
+            statisticsButtonSprite.Position = new(350, 225);
+            exitButtonSprite.Position = new(350, 375);
+
+            App.window.Draw(menubackGroundSprite);
+            App.window.Draw(playButtonSprite);
+            App.window.Draw(statisticsButtonSprite);
+            App.window.Draw(exitButtonSprite);
+            
         }
     }
 

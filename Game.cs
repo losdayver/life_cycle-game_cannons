@@ -12,6 +12,7 @@ using System.Dynamic;
 using static System.Formats.Asn1.AsnWriter;
 using System.Diagnostics.Metrics;
 using System.Runtime.InteropServices;
+using SFML.Audio;
 
 namespace game_cannons
 {
@@ -34,8 +35,12 @@ namespace game_cannons
         public static GameState GAME_STATE = GameState.GAME_SESSION;
         public static Session session = new();
 
+        static Music music = new (VARIABLES.SOUNDSPATH + "main_theme.ogg");
+
         static Game()
         {
+            music.Loop = true;
+            music.Play();
         }
 
         /// <summary>

@@ -52,6 +52,10 @@ namespace game_cannons
     /// </summary>
     internal static class TEXTURES
     {
+        public static readonly Texture MENU_BACKGROUND;
+        public static readonly Texture PLAY_BUTTON;
+        public static readonly Texture STATISTICS_BUTTON;
+        public static readonly Texture EXIT_BUTTON;
         public static readonly Texture GREENTANKBODY;
         public static readonly Texture TANKTRACKS;
         public static readonly Texture TURRET;
@@ -65,6 +69,10 @@ namespace game_cannons
 
         static TEXTURES()
         {
+            MENU_BACKGROUND = new(VARIABLES.RESOURCEPATH + "menu\\menu_background.png");
+            PLAY_BUTTON = new(VARIABLES.RESOURCEPATH + "menu\\play_button.png");
+            STATISTICS_BUTTON = new(VARIABLES.RESOURCEPATH + "menu\\statistics_button.png");
+            EXIT_BUTTON = new(VARIABLES.RESOURCEPATH + "menu\\exit_button.png");  
             GREENTANKBODY = new(VARIABLES.RESOURCEPATH + "Tanks&shells\\Default size\\tanks_tankGreen_body1.png");
             TANKTRACKS = new(VARIABLES.RESOURCEPATH + "Tanks&shells\\Default size\\tanks_tankTracks2.png");
             TURRET = new(VARIABLES.RESOURCEPATH + "Tanks&shells\\Default size\\tanks_turret4.png");
