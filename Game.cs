@@ -50,9 +50,13 @@ namespace game_cannons
             }
         }
     }
-
+    
+    /// <summary>
+    /// Данный класс описывает пулю, выпускаемую танком при зажатии пробела
+    /// </summary>
     public class Bullet
     {
+        Session session;
         public float x = 0;
         public float y = 0;
         float acceleration = 0.2f;
@@ -61,7 +65,7 @@ namespace game_cannons
         float ySpeed;
         float angle;
 
-        public Bullet(Tank tank, float startSpeed)
+        public Bullet(Tank tank, float startSpeed, Session session)
         {
             x = tank.x;
             y = tank.y - 15; // фиксируем патрон на уровне дула
@@ -70,6 +74,8 @@ namespace game_cannons
             ySpeed = (float)Math.Sin((double)angle * Math.PI / 180) * startSpeed;
 
             this.startSpeed = startSpeed;
+
+            this.session = session;
         }
 
         public void Tick()
@@ -77,23 +83,23 @@ namespace game_cannons
             bool checkXInWindow = x > 0 && x < App.window.Size.X;
             if (checkXInWindow)
             {
-                bool IsNotCollision = this.y < App.window.Size.Y - Game.session.scene.sceneHeights[(uint)x];
+                bool IsNotCollision = this.y < App.window.Size.Y - session.scene.sceneHeights[(uint)x];
                 if (IsNotCollision) // если еще не столкнулся с землей
                 {
                     bool turnAlreadyPlused = false; // ниже объяснение
-                    for (int i = 0; i < Game.session.tanks.Count; i++)  // проверяем столкновение со всеми танками
+                    for (int i = 0; i < session.tanks.Count; i++)  // проверяем столкновение со всеми танками
                     {
-                        bool IsTarget = x >= Game.session.tanks[i].x - 10 && x <= Game.session.tanks[i].x + 10;
-                        IsTarget = IsTarget && y >= Game.session.tanks[i].y - 12 && y <= Game.session.tanks[i].y + 10;
-                        if (IsTarget && Game.session.tanks[i].isAlive) // если попали в еще живой танк
+                        bool IsTarget = x >= session.tanks[i].x - 10 && x <= session.tanks[i].x + 10;
+                        IsTarget = IsTarget && y >= session.tanks[i].y - 12 && y <= session.tanks[i].y + 10;
+                        if (IsTarget && session.tanks[i].isAlive) // если попали в еще живой танк
                         {
-                            Game.session.tanks[i].hp--;
-                            if (Game.session.tanks[i].hp == 0)
+                            session.tanks[i].hp--;
+                            if (session.tanks[i].hp == 0)
                             {
                                 Game.session.tanks[i].isAlive = false;
                             }
-                            Game.session.bullet = null; // удаляем патрон
-                            Game.session.bulletCreated = false;
+                            session.bullet = null; // удаляем патрон
+                            session.bulletCreated = false;
                             if (!turnAlreadyPlused)  // без этого если за один выстрел ранил 2 цели - +2 хода
                             {
                                 Game.session.turn++;
@@ -106,7 +112,7 @@ namespace game_cannons
                 }
                 else
                 {
-                    Game.session.scene.Hit(x);  //разрушение ландшафта
+                    session.scene.Hit(x);  //разрушение ландшафта
                 }
             }
             else
@@ -188,33 +194,27 @@ namespace game_cannons
             {
                 x = x + currentSpeed * (Math.Abs(vector[1].Y / vector[0].Y));
             }
-            
-
-            /*x = x % session.scene.xSize;
-
-            if (x <= 0)
-                x = session.scene.xSize - 1;*/
 
             if (KEYS.KEY_UP && turretAngle > 180)
                 turretAngle -= turretRotationSpeed;
             else if (KEYS.KEY_DOWN && turretAngle < 360)
                 turretAngle += turretRotationSpeed;
 
-            if (KEYS.KEY_SPACE && !Game.session.bulletCreated)
+            if (KEYS.KEY_SPACE && !session.bulletCreated)
             {
-                Game.session.spaceWasPressed = true;
-                Game.session.startSpeed += 0.5f;
+                session.spaceWasPressed = true;
+                session.bulletStartSpeed += session.bulletPowerIncrement;
+
+                if (session.bulletStartSpeed > session.bulletMaxSpeed) session.bulletStartSpeed = session.bulletMaxSpeed;
             }
 
-            if (!KEYS.KEY_SPACE && Game.session.spaceWasPressed)
+            if (!KEYS.KEY_SPACE && session.spaceWasPressed)
             {
-                if (Game.session.startSpeed > 20) Game.session.startSpeed = 20;
-                //Console.WriteLine(Game.session.startSpeed);  проверка скорости
-                Bullet bullet = new(this, Game.session.startSpeed);
+                Bullet bullet = new(this, session.bulletStartSpeed, session);
                 session.bullet = bullet;
-                Game.session.bulletCreated = true;
-                Game.session.startSpeed = 0;
-                Game.session.spaceWasPressed = false;
+                session.bulletCreated = true;
+                session.bulletStartSpeed = 0;
+                session.spaceWasPressed = false;
             }
 
             
@@ -226,6 +226,7 @@ namespace game_cannons
     /// </summary>
     public class Scene
     {
+        Session session;
         /// <summary>
         /// Размер сцены по горизонтали в пикселях -- значение должно быть 2^n
         /// </summary>
@@ -255,7 +256,7 @@ namespace game_cannons
         /// </summary>
         public uint[] sceneHeights;
 
-        public Scene(uint xSize, uint ySize)
+        public Scene(uint xSize, uint ySize, Session session)
         {
             this._xSize = xSize;
             this.ySize = ySize;
@@ -263,6 +264,8 @@ namespace game_cannons
             map = new RenderTexture(xSize, ySize);
 
             sceneHeights = new uint[xSize];
+
+            this.session = session;
         }
 
         /// <summary>
@@ -413,9 +416,9 @@ namespace game_cannons
         {
             GenerateCrater((uint)x);  // создание кратера
             GenerateMap();
-            Game.session.bullet = null;
-            Game.session.bulletCreated = false;
-            Game.session.turn++;
+            session.bullet = null;
+            session.bulletCreated = false;
+            session.turn++;
         }
 
         public void GenerateCrater(uint x0)
@@ -446,15 +449,19 @@ namespace game_cannons
         public List<Tank> tanks = new();  // список танков
         public int turn = 0;  // для смены хода
         public Tank controlledTank;  // текущий управляемый танк
-        public Scene scene = new(1024, 600);
+        public Scene scene;
         public Bullet bullet;
         public bool bulletCreated = false;  // выпущена ли сейчас пуля (чтобы нельзя было прервать полет и
                                             // запустить ее еще раз)
-        public float startSpeed = 0;
+        public float bulletStartSpeed = 0;
+        public float bulletMaxSpeed = 18;
+        public float bulletPowerIncrement = 0.5f;
+
         public bool spaceWasPressed = false;
 
         public Session() 
         {
+            scene = new(1024, 600, this);
             tanks.Add(new Tank(this, 100, "player1"));
             tanks.Add(new Tank(this, 500, "player2"));
             tanks.Add(new Tank(this, 900, "player3"));

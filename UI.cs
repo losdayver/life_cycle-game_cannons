@@ -63,6 +63,7 @@ namespace game_cannons
 
             foreach (Tank t in Game.session.tanks)
             {
+                if (!t.isAlive) continue;
 
                 Sprite tanksTracksSprite = new(TEXTURES.TANKTRACKS);
                 Sprite tanksBodySprite = new(TEXTURES.GREENTANKBODY);
@@ -92,7 +93,7 @@ namespace game_cannons
                 App.window.Draw(tanksBodySprite);
                 App.window.Draw(tanksTracksSprite);
 
-                RectangleShape hp_box = new(new Vector2f(40f, 8f));
+                RectangleShape hp_box = new(new Vector2f(35f, 6f));
                 hp_box.Position = new(t.x - hp_box.Size.X / 2, t.y - 40);
                 hp_box.FillColor = Color.Red;
 
@@ -103,6 +104,16 @@ namespace game_cannons
                 App.window.Draw(hp_box);
                 App.window.Draw(hp_box1);
 
+                if (t == Game.session.controlledTank)
+                {
+                    RectangleShape power_box = new(hp_box);
+                    power_box.Size = new(hp_box.Size.X * (Game.session.bulletStartSpeed / Game.session.bulletMaxSpeed), hp_box.Size.Y/2);
+                    power_box.FillColor = Color.Blue;
+                    App.window.Draw(power_box);
+                }
+
+                
+
             }
 
             if (Game.session.bullet != null)
@@ -110,6 +121,8 @@ namespace game_cannons
                 bulletSprite.Position = new(Game.session.bullet.x, Game.session.bullet.y);
                 App.window.Draw(bulletSprite);
             }
+
+
         }
     }
 
