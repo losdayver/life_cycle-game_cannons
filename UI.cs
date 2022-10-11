@@ -163,7 +163,7 @@ namespace game_cannons
             for (int i = 0; i < buttons.Count; i++)
             {
                 button_sprite.Position = 
-                    new(button_sprite.Position.X, i * (TEXTURES.PLACEHOLDER_BUTTON.Size.Y * button_scale + margin) + margin);
+                    new(button_sprite.Position.X, i * (TEXTURES.PLACEHOLDER_BUTTON.Size.Y * button_scale + margin) + 120);
 
                 Text button_text = new(buttons[i].name, menu_font);
                 button_text.CharacterSize = 48;
