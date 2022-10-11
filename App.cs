@@ -54,8 +54,7 @@ namespace game_cannons
                 // Обновление экрана
                 window.Display();
             }
-            Game.musicMenu.Dispose();
-            Game.music.Dispose();
+            Game.TerminateAll();
         }
 
         /// <summary>

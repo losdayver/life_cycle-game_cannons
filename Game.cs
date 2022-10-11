@@ -32,7 +32,7 @@ namespace game_cannons
         /// <summary>
         /// Допустимые значения переменной: MENU, SETTINGS, GAME_SESSION
         /// </summary>
-        public static GameState GAME_STATE = GameState.GAME_SESSION;
+        public static GameState GAME_STATE = GameState.MENU;
         public static Session session = new();
 
         public static Music music = new (VARIABLES.SOUNDSPATH + "main_theme.ogg");
@@ -43,6 +43,12 @@ namespace game_cannons
             musicMenu.Loop = true;
             music.Loop = true;
             music.Play();
+        }
+
+        public static void TerminateAll()
+        {
+            music.Dispose();
+            musicMenu.Dispose();
         }
 
         /// <summary>

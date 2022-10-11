@@ -140,34 +140,72 @@ namespace game_cannons
 
     class Menu
     {
-        List<Button> buttons= new();
+        static Font menu_font = new Font(VARIABLES.DEFAULTFONT);
+        uint margin = 20;
+        float button_scale = 0.5f;
+
+        //List<Sprite> buttons= new();
+        List<Button> buttons = new();
+
         public Menu()
         {
-            /*
-            buttons.Add(new Button("play_button"));
-            buttons.Add(new Button("statistics_button"));
-            buttons.Add(new Button("exit_button"));
-            */
+            buttons.Add(new Button("Играть"));
+            buttons.Add(new Button("Статистика"));
+            buttons.Add(new Button("Выйти"));
         }
-        public void Display() {
-            Sprite menubackGroundSprite = new(TEXTURES.MENU_BACKGROUND);
-            Sprite playButtonSprite = new(TEXTURES.PLAY_BUTTON);
-            Sprite statisticsButtonSprite = new(TEXTURES.STATISTICS_BUTTON);
-            Sprite exitButtonSprite = new(TEXTURES.EXIT_BUTTON);
+        public void Display() 
+        {
 
-            playButtonSprite.Scale /= 2;
-            statisticsButtonSprite.Scale /= 2;
-            exitButtonSprite.Scale /= 2;
+            Sprite button_sprite = new(TEXTURES.PLACEHOLDER_BUTTON);
+            button_sprite.Scale *= button_scale;
+            button_sprite.Position = new(App.width / 2 - TEXTURES.PLACEHOLDER_BUTTON.Size.X * button_scale / 2, 0);
 
-            playButtonSprite.Position = new(350, 75);
-            statisticsButtonSprite.Position = new(350, 225);
-            exitButtonSprite.Position = new(350, 375);
+            for (int i = 0; i < buttons.Count; i++)
+            {
+                button_sprite.Position = 
+                    new(button_sprite.Position.X, i * (TEXTURES.PLACEHOLDER_BUTTON.Size.Y * button_scale + margin) + margin);
 
-            App.window.Draw(menubackGroundSprite);
-            App.window.Draw(playButtonSprite);
-            App.window.Draw(statisticsButtonSprite);
-            App.window.Draw(exitButtonSprite);
-            
+                Text button_text = new(buttons[i].name, menu_font);
+                button_text.CharacterSize = 48;
+
+                button_text.Position = new(button_sprite.Position.X + 30, button_sprite.Position.Y + 30);
+
+                //Проверка наведения мыши на кнопку
+                if (button_sprite.GetGlobalBounds().Intersects
+                    (
+                        new FloatRect
+                        (
+                            new Vector2f
+                            (
+                                (float)Mouse.GetPosition().X - App.window.Position.X,
+                                Mouse.GetPosition().Y - App.window.Position.Y),
+                                new Vector2f(1, 1)
+                            )
+                        )
+                    )
+                {
+                    Sprite b = new(button_sprite);
+                    b.Color = Color.Green;
+                    App.window.Draw(b);
+
+                    if (KEYS.MOUSE_LEFT)
+                    {
+                        if (buttons[i].name == "Играть")
+                        {
+                            Game.GAME_STATE = Game.GameState.GAME_SESSION;
+                        }
+                        else if (buttons[i].name == "Выйти")
+                        {
+                            App.window.Close();
+                        }
+                    }
+                        
+                }
+                else
+                    App.window.Draw(button_sprite);
+                App.window.Draw(button_text);
+            }
+
         }
     }
 

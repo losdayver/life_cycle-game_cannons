@@ -66,9 +66,11 @@ namespace game_cannons
         public static readonly Texture ARROW_CURSOR;
         public static readonly Texture ARROW_LEFT;
         public static readonly Texture ARROW_RIGHT;
+        public static readonly Texture PLACEHOLDER_BUTTON;
 
         static TEXTURES()
         {
+            PLACEHOLDER_BUTTON = new(VARIABLES.RESOURCEPATH + "menu\\placeholder_button.png");
             MENU_BACKGROUND = new(VARIABLES.RESOURCEPATH + "menu\\menu_background.png");
             PLAY_BUTTON = new(VARIABLES.RESOURCEPATH + "menu\\play_button.png");
             STATISTICS_BUTTON = new(VARIABLES.RESOURCEPATH + "menu\\statistics_button.png");
