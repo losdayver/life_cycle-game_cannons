@@ -13,6 +13,7 @@ namespace game_cannons
     /// </summary>
     internal static class KEYS
     {
+        public static bool GO_BACK = false;
         public static bool KEY_UP = false;
         public static bool KEY_LEFT = false;
         public static bool KEY_DOWN = false;

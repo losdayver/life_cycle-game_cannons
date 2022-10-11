@@ -64,11 +64,12 @@ namespace game_cannons
         {
             var window = (Window)sender;
 
-            if (e.Code == Keyboard.Key.Escape)
-            {
-                window.Close();
-            }
+            //if (e.Code == Keyboard.Key.Escape)
+            //{
+            //    window.Close();
+            //}
 
+            setState(Keyboard.Key.Escape, ref KEYS.GO_BACK);
             setState(Keyboard.Key.Up, ref KEYS.KEY_UP);
             setState(Keyboard.Key.Down, ref KEYS.KEY_DOWN);
             setState(Keyboard.Key.Left, ref KEYS.KEY_LEFT);
@@ -88,6 +89,7 @@ namespace game_cannons
         {
             var window = (Window)sender;
 
+            setState(Keyboard.Key.Escape, ref KEYS.GO_BACK);
             setState(Keyboard.Key.Up, ref KEYS.KEY_UP);
             setState(Keyboard.Key.Down, ref KEYS.KEY_DOWN);
             setState(Keyboard.Key.Left, ref KEYS.KEY_LEFT);

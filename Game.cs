@@ -59,6 +59,12 @@ namespace game_cannons
             if (GAME_STATE == GameState.GAME_SESSION)
             {
                 session.Tick();
+
+                if (KEYS.GO_BACK)
+                {
+                    GAME_STATE = GameState.MENU;
+                    session = new Session();
+                }
             }
             else if (GAME_STATE == GameState.MENU)
             {

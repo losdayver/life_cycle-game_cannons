@@ -198,14 +198,12 @@ namespace game_cannons
                         {
                             App.window.Close();
                         }
-                    }
-                        
+                    }   
                 }
                 else
                     App.window.Draw(button_sprite);
                 App.window.Draw(button_text);
             }
-
         }
     }
 
