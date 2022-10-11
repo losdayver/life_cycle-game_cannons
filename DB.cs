@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.IO;
 
 namespace game_cannons
@@ -18,15 +19,11 @@ namespace game_cannons
         /// Сохранение результатов игры в соответствующее расположение target
         /// </summary>
         /// <param name="target"> вид сохранения </param>
-        public static void SaveResult(SaveTarget target, out bool success)
+        public static void SaveResult(SaveTarget target)
         {
             if (target == SaveTarget.FILE)
             {
-                success = SaveToFile();
-            }
-            else
-            {
-                success = false;
+                SaveToFile();
             }
         }
 

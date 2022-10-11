@@ -12,6 +12,7 @@ using System.Numerics;
 using SFML.System;
 using static System.Collections.Specialized.BitVector32;
 using SFML.Window;
+using SFML.Audio;
 
 namespace game_cannons
 {
@@ -141,7 +142,7 @@ namespace game_cannons
     {
         List<Button> buttons= new();
         public Menu()
-        { 
+        {
             /*
             buttons.Add(new Button("play_button"));
             buttons.Add(new Button("statistics_button"));

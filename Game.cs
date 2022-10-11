@@ -35,10 +35,12 @@ namespace game_cannons
         public static GameState GAME_STATE = GameState.GAME_SESSION;
         public static Session session = new();
 
-        static Music music = new (VARIABLES.SOUNDSPATH + "main_theme.ogg");
+        public static Music music = new (VARIABLES.SOUNDSPATH + "main_theme.ogg");
+        public static Music musicMenu = new(VARIABLES.SOUNDSPATH + "menu_theme.ogg");
 
         static Game()
         {
+            musicMenu.Loop = true;
             music.Loop = true;
             music.Play();
         }
@@ -513,19 +515,11 @@ namespace game_cannons
             }
             if (aliveCount <= 1)
             {
-                bool success;
-                DB.SaveResult(DB.SaveTarget.FILE, out success);
+                DB.SaveResult(DB.SaveTarget.FILE);
 
-                if (success)
-                {
-                    Console.WriteLine("Результаты текущей партии успешно сохранены!");
-                }
-                else 
-                {
-                    Console.WriteLine("Не удалось сохранить результат текущей партии.");
-                }
-
-                App.window.Close();
+                Game.GAME_STATE = Game.GameState.MENU;
+                Game.music.Stop();
+                Game.musicMenu.Play();
             }
 
             // после смерти танки не удаляются, а зануляются, поэтому
