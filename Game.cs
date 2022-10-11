@@ -42,7 +42,7 @@ namespace game_cannons
         {
             musicMenu.Loop = true;
             music.Loop = true;
-            music.Play();
+            musicMenu.Play();
         }
 
         public static void TerminateAll()
@@ -63,6 +63,8 @@ namespace game_cannons
                 if (KEYS.GO_BACK)
                 {
                     GAME_STATE = GameState.MENU;
+                    music.Stop();
+                    musicMenu.Play();
                     session = new Session();
                 }
             }
@@ -502,6 +504,7 @@ namespace game_cannons
 
         public bool spaceWasPressed = false;
 
+
         public Session() 
         {
             scene = new(App.width, App.height, this);
@@ -530,6 +533,8 @@ namespace game_cannons
                 DB.SaveResult(DB.SaveTarget.FILE);
 
                 Game.GAME_STATE = Game.GameState.MENU;
+                Game.session = new();
+
                 Game.music.Stop();
                 Game.musicMenu.Play();
             }

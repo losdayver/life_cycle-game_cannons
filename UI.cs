@@ -193,6 +193,8 @@ namespace game_cannons
                         if (buttons[i].name == "Играть")
                         {
                             Game.GAME_STATE = Game.GameState.GAME_SESSION;
+                            Game.musicMenu.Stop();
+                            Game.music.Play();
                         }
                         else if (buttons[i].name == "Выйти")
                         {
