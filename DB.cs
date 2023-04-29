@@ -9,22 +9,14 @@ namespace game_cannons
         /// <summary>
         /// Список допустимых целей для сохренения игры
         /// </summary>
-        public enum SaveTarget
-        {
-            FILE,
-            DB
-        }
 
         /// <summary>
         /// Сохранение результатов игры в соответствующее расположение target
         /// </summary>
         /// <param name="target"> вид сохранения </param>
-        public static void SaveResult(SaveTarget target)
+        public static void SaveResult()
         {
-            if (target == SaveTarget.FILE)
-            {
-                SaveToFile();
-            }
+            SaveToFile();
         }
 
         /// <summary>

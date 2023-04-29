@@ -183,8 +183,8 @@ namespace game_cannons
         /// <summary>
         /// Жизни танка
         /// </summary>
-        public int max_hp = 4;
-        public int hp = 4;
+        public int max_hp = 3;
+        public int hp = 3;
         Vector2[] vector;
 
         public Tank(Session s, float x, string name) 
@@ -530,7 +530,7 @@ namespace game_cannons
             }
             if (aliveCount <= 1)
             {
-                DB.SaveResult(DB.SaveTarget.FILE);
+                DB.SaveResult();
 
                 Game.GAME_STATE = Game.GameState.MENU;
                 Game.session = new();
