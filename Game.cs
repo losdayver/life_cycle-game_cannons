@@ -530,7 +530,11 @@ namespace game_cannons
             }
             if (aliveCount <= 1)
             {
-                DB.SaveResult();
+                IResultSaver saver = new ResultSaver();
+                saver.SaveResult();
+
+                IResultPrinter printer = new ResultPrinter();
+                printer.PrintResult();
 
                 Game.GAME_STATE = Game.GameState.MENU;
                 Game.session = new();
