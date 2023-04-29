@@ -140,6 +140,7 @@ namespace game_cannons
 
     class Menu
     {
+        public static bool resultsButtonPressed = false;
         static Font menu_font = new Font(VARIABLES.DEFAULTFONT);
         uint margin = 20;
         float button_scale = 0.5f;
@@ -195,6 +196,25 @@ namespace game_cannons
                             Game.GAME_STATE = Game.GameState.GAME_SESSION;
                             Game.musicMenu.Stop();
                             Game.music.Play();
+                        }
+                        else if (buttons[i].name == "Статистика" && !resultsButtonPressed)
+                        {
+                            string path = VARIABLES.DATABASEPATH + "FileDB.txt";
+                            FileInfo file = new(path);
+
+                            if (file.Exists) 
+                            {
+                                StreamReader sr = new StreamReader(file.FullName);
+
+                                string resultsString = sr.ReadToEnd();
+
+                                sr.Close();
+
+                                Console.WriteLine("Результаты поледних боёв");
+                                Console.WriteLine(resultsString);
+
+                                resultsButtonPressed = true;
+                            }
                         }
                         else if (buttons[i].name == "Выйти")
                         {

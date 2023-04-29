@@ -123,4 +123,14 @@ namespace game_cannons
             return true;
         }
     }
+
+    public class PrinterToSaverAdapter : IResultSaver
+    {
+        private ResultPrinter resultPrinter = new();
+
+        public void SaveResult() 
+        {
+            resultPrinter.PrintResult();
+        }
+    }
 }
